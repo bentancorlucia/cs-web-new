@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui";
+import { useAuth } from "@/hooks/useAuth";
+import { CartButton } from "@/components/tienda/CartDrawer";
 
 interface NavItem {
   label: string;
@@ -25,7 +27,7 @@ const navItems: NavItem[] = [
       { label: "Memorias", href: "/club/memorias" },
     ],
   },
-  { label: "Deportes", href: "/deportes" },
+  { label: "Disciplinas", href: "/deportes" },
   { label: "Socios", href: "/socios" },
   { label: "Beneficios", href: "/beneficios" },
   { label: "Eventos", href: "/eventos" },
@@ -36,7 +38,16 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, profile, isAuthenticated, isLoading, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    setUserMenuOpen(false);
+    router.push("/");
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -217,25 +228,131 @@ export function Header() {
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center gap-3">
-              <Link href="/login">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "transition-colors duration-300",
-                    isScrolled
-                      ? "text-white/90 hover:text-white hover:bg-white/10"
-                      : "text-white/90 hover:text-white hover:bg-white/10"
-                  )}
+              {/* Cart Button - Solo visible en la tienda */}
+              {pathname.startsWith("/tienda") && (
+                <CartButton className="text-white" />
+              )}
+
+              {isLoading ? (
+                <div className="w-8 h-8 rounded-full bg-white/20 animate-pulse" />
+              ) : isAuthenticated ? (
+                <div
+                  className="relative"
+                  onMouseEnter={() => setUserMenuOpen(true)}
+                  onMouseLeave={() => setUserMenuOpen(false)}
                 >
-                  Iniciar sesión
-                </Button>
-              </Link>
-              <Link href="/registro">
-                <Button variant="secondary" size="sm">
-                  Registrarse
-                </Button>
-              </Link>
+                  <button
+                    type="button"
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300",
+                      "hover:bg-white/10",
+                      isScrolled ? "text-white" : "text-white"
+                    )}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-amarillo flex items-center justify-center text-bordo-dark font-semibold text-sm">
+                      {profile?.nombre?.[0]?.toUpperCase() ||
+                        user?.email?.[0]?.toUpperCase() ||
+                        "U"}
+                    </div>
+                    <span className="font-medium">
+                      {profile?.nombre || "Mi cuenta"}
+                    </span>
+                    <svg
+                      className={cn(
+                        "w-4 h-4 transition-transform duration-200",
+                        userMenuOpen && "rotate-180"
+                      )}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {/* User Dropdown */}
+                  <div
+                    className={cn(
+                      "absolute top-full right-0 pt-2 transition-all duration-300",
+                      userMenuOpen
+                        ? "opacity-100 visible translate-y-0"
+                        : "opacity-0 invisible -translate-y-2"
+                    )}
+                  >
+                    <div className="bg-white rounded-xl shadow-2xl shadow-black/20 border border-gray-100 py-2 min-w-[200px] overflow-hidden">
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <p className="text-sm font-medium text-gray-900">
+                          {profile?.nombre} {profile?.apellido}
+                        </p>
+                        <p className="text-xs text-gray-500 truncate">
+                          {user?.email}
+                        </p>
+                      </div>
+                      <Link
+                        href="/mi-cuenta"
+                        className="block px-4 py-2.5 text-base text-gray-700 hover:bg-bordo/5 hover:text-bordo transition-colors"
+                      >
+                        Mi cuenta
+                      </Link>
+                      <Link
+                        href="/mi-cuenta/pedidos"
+                        className="block px-4 py-2.5 text-base text-gray-700 hover:bg-bordo/5 hover:text-bordo transition-colors"
+                      >
+                        Mis pedidos
+                      </Link>
+                      <Link
+                        href="/mi-cuenta/entradas"
+                        className="block px-4 py-2.5 text-base text-gray-700 hover:bg-bordo/5 hover:text-bordo transition-colors"
+                      >
+                        Mis entradas
+                      </Link>
+                      {(profile?.rol === "admin" ||
+                        profile?.rol === "directivo") && (
+                        <Link
+                          href="/admin"
+                          className="block px-4 py-2.5 text-base text-gray-700 hover:bg-bordo/5 hover:text-bordo transition-colors border-t border-gray-100"
+                        >
+                          Panel admin
+                        </Link>
+                      )}
+                      <button
+                        type="button"
+                        onClick={handleSignOut}
+                        className="w-full text-left px-4 py-2.5 text-base text-red-600 hover:bg-red-50 transition-colors border-t border-gray-100"
+                      >
+                        Cerrar sesión
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <Link href="/login">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn(
+                        "transition-colors duration-300",
+                        isScrolled
+                          ? "text-white/90 hover:text-white hover:bg-white/10"
+                          : "text-white/90 hover:text-white hover:bg-white/10"
+                      )}
+                    >
+                      Iniciar sesión
+                    </Button>
+                  </Link>
+                  <Link href="/registro">
+                    <Button variant="secondary" size="sm">
+                      Registrarse
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -402,19 +519,66 @@ export function Header() {
 
             {/* Mobile Actions */}
             <div className="mt-8 pt-8 border-t border-white/10 space-y-3">
-              <Link href="/login" className="block">
-                <Button
-                  variant="outline"
-                  className="w-full border-white/30 text-white hover:bg-white hover:text-bordo"
-                >
-                  Iniciar sesión
-                </Button>
-              </Link>
-              <Link href="/registro" className="block">
-                <Button variant="secondary" className="w-full">
-                  Registrarse
-                </Button>
-              </Link>
+              {isLoading ? (
+                <div className="h-12 rounded-xl bg-white/10 animate-pulse" />
+              ) : isAuthenticated ? (
+                <>
+                  <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-amarillo flex items-center justify-center text-bordo-dark font-semibold">
+                      {profile?.nombre?.[0]?.toUpperCase() ||
+                        user?.email?.[0]?.toUpperCase() ||
+                        "U"}
+                    </div>
+                    <div>
+                      <p className="font-medium text-white">
+                        {profile?.nombre} {profile?.apellido}
+                      </p>
+                      <p className="text-sm text-white/60 truncate">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </div>
+                  <Link href="/mi-cuenta" className="block">
+                    <Button
+                      variant="outline"
+                      className="w-full border-white/30 text-white hover:bg-white hover:text-bordo"
+                    >
+                      Mi cuenta
+                    </Button>
+                  </Link>
+                  {(profile?.rol === "admin" ||
+                    profile?.rol === "directivo") && (
+                    <Link href="/admin" className="block">
+                      <Button variant="secondary" className="w-full">
+                        Panel admin
+                      </Button>
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="w-full px-6 py-3 text-base font-medium rounded-xl border-2 border-red-400/50 text-red-300 hover:bg-red-500 hover:text-white hover:border-red-500 transition-colors"
+                  >
+                    Cerrar sesión
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" className="block">
+                    <Button
+                      variant="outline"
+                      className="w-full border-white/30 text-white hover:bg-white hover:text-bordo"
+                    >
+                      Iniciar sesión
+                    </Button>
+                  </Link>
+                  <Link href="/registro" className="block">
+                    <Button variant="secondary" className="w-full">
+                      Registrarse
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

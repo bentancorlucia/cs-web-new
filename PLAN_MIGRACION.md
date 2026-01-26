@@ -230,18 +230,18 @@ src/
 - [ ] **`/frontend-design`** → Socios y Beneficios
 - [ ] **`/web-design-guidelines`** → Auditoría completa páginas públicas
 
-### Fase 4: Autenticación
-- [ ] Supabase Auth
-- [ ] **`/frontend-design`** → Formularios (Login, Registro, Recuperar)
-- [ ] Middleware rutas protegidas
-- [ ] AuthProvider + useAuth
+### Fase 4: Autenticación ✅
+- [x] Supabase Auth
+- [x] **`/frontend-design`** → Formularios (Login, Registro, Recuperar)
+- [x] Middleware rutas protegidas
+- [x] AuthProvider + useAuth
 - [ ] **`/web-design-guidelines`** → Revisar formularios (validación, errores, UX)
 
-### Fase 5: Área de Socios
-- [ ] **`/frontend-design`** → Dashboard
-- [ ] **`/frontend-design`** → Perfil editable
-- [ ] **`/frontend-design`** → Historial pedidos
-- [ ] **`/frontend-design`** → Mis Entradas
+### Fase 5: Área de Socios ✅
+- [x] **`/frontend-design`** → Dashboard
+- [x] **`/frontend-design`** → Perfil editable
+- [x] **`/frontend-design`** → Historial pedidos
+- [x] **`/frontend-design`** → Mis Entradas
 - [ ] **`/web-design-guidelines`** → Auditar área privada (consistencia, navegación, estados)
 
 ### Fase 6: Tienda
