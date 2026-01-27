@@ -1,12 +1,19 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout";
 import { getProducts, getCategories, getDeportes } from "@/lib/tienda";
 import { TiendaContent } from "./TiendaContent";
 
-export const metadata = {
-  title: "Tienda | Club Seminario",
+export const metadata: Metadata = {
+  title: "Tienda Oficial",
   description:
-    "Tienda oficial de Club Seminario. Encontrá indumentaria, accesorios y productos del club.",
+    "Tienda oficial de Club Seminario. Comprá indumentaria deportiva, accesorios y productos exclusivos del club con envío a todo Uruguay.",
+  openGraph: {
+    title: "Tienda Oficial | Club Seminario",
+    description:
+      "Indumentaria deportiva, accesorios y productos exclusivos del Club Seminario.",
+    images: ["/foto-tienda.webp"],
+  },
 };
 
 interface TiendaPageProps {

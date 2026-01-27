@@ -1,12 +1,19 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout";
 import { getEventosWithPrices } from "@/lib/eventos";
 import { EventosContent } from "./EventosContent";
 
-export const metadata = {
-  title: "Eventos | Club Seminario",
+export const metadata: Metadata = {
+  title: "Eventos",
   description:
-    "Eventos sociales y actividades de Club Seminario. Comprá tus entradas para fiestas, torneos y encuentros del club.",
+    "Eventos sociales y actividades de Club Seminario. Comprá tus entradas online para fiestas, torneos y encuentros del club.",
+  openGraph: {
+    title: "Eventos | Club Seminario",
+    description:
+      "Fiestas, torneos y encuentros del Club Seminario. Comprá tus entradas online.",
+    images: ["/foto-eventos.webp"],
+  },
 };
 
 interface EventosPageProps {

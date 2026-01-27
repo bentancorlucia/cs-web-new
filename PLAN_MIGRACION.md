@@ -287,11 +287,11 @@ src/
 - [ ] Lighthouse > 90
 - [ ] **`/web-design-guidelines`** → Auditoría final global (a11y, UX, patrones, consistencia)
 
-### Fase 12: Deploy
-- [ ] Vercel
-- [ ] Supabase producción (backups diarios automáticos)
-- [ ] Dominio + SSL
-- [ ] Sentry
+### Fase 12: Deploy ✅
+- [x] Vercel (vercel.json con headers de seguridad y cron jobs)
+- [x] Supabase producción (backups diarios automáticos) - Ver DEPLOY.md
+- [x] Dominio + SSL - Ver DEPLOY.md
+- [x] Sentry (monitoreo de errores configurado)
 
 ---
 
