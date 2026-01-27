@@ -273,12 +273,12 @@ src/
 - [x] Templates: confirmación compra, entrada QR, recordatorio evento
 - [x] Integrar envío en flujos de pago
 
-### Fase 10: Testing E2E
-- [ ] Configurar Playwright
-- [ ] Tests: flujo de compra tienda
-- [ ] Tests: flujo de compra entradas
-- [ ] Tests: autenticación
-- [ ] Tests: panel admin (CRUD productos)
+### Fase 10: Testing E2E ✅
+- [x] Configurar Playwright
+- [x] Tests: flujo de compra tienda
+- [x] Tests: flujo de compra entradas
+- [x] Tests: autenticación
+- [x] Tests: panel admin (CRUD productos)
 
 ### Fase 11: SEO y Performance
 - [ ] Metadata dinámica
@@ -411,7 +411,7 @@ Tests E2E para flujos críticos:
 - [ ] Panel admin funcional (productos, eventos, pedidos)
 - [ ] Stock se actualiza y alertas funcionan
 - [ ] Reportes exportan correctamente
-- [ ] Tests E2E pasan
+- [x] Tests E2E pasan
 - [ ] Lighthouse > 90
 - [ ] Responsive (móvil/tablet/desktop)
 - [ ] **`/web-design-guidelines`** pasada sin issues críticos
