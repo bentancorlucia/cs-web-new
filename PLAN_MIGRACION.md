@@ -259,19 +259,19 @@ src/
 - [ ] **`/frontend-design`** → Sistema de escaneo (funcionarios)
 - [ ] **`/web-design-guidelines`** → Auditar flujo de eventos (claridad, mobile-first)
 
-### Fase 8: Panel de Administración
-- [ ] **`/frontend-design`** → Layout admin (Sidebar, Header)
-- [ ] **`/frontend-design`** → Dashboard con métricas (ventas, pedidos, stock bajo)
-- [ ] **`/frontend-design`** → CRUD Productos con gestión de stock
-- [ ] **`/frontend-design`** → CRUD Eventos con lotes
-- [ ] **`/frontend-design`** → Gestión de pedidos (ver, cambiar estado)
-- [ ] **`/frontend-design`** → Reportes exportables (CSV)
+### Fase 8: Panel de Administración ✅
+- [x] **`/frontend-design`** → Layout admin (Sidebar, Header)
+- [x] **`/frontend-design`** → Dashboard con métricas (ventas, pedidos, stock bajo)
+- [x] **`/frontend-design`** → CRUD Productos con gestión de stock
+- [x] **`/frontend-design`** → CRUD Eventos con lotes
+- [x] **`/frontend-design`** → Gestión de pedidos (ver, cambiar estado)
+- [x] **`/frontend-design`** → Reportes exportables (CSV)
 - [ ] **`/web-design-guidelines`** → Auditar panel admin (usabilidad, consistencia)
 
-### Fase 9: Emails Transaccionales
-- [ ] Configurar Resend
-- [ ] Templates: confirmación compra, entrada QR, recordatorio evento
-- [ ] Integrar envío en flujos de pago
+### Fase 9: Emails Transaccionales ✅
+- [x] Configurar Resend
+- [x] Templates: confirmación compra, entrada QR, recordatorio evento
+- [x] Integrar envío en flujos de pago
 
 ### Fase 10: Testing E2E
 - [ ] Configurar Playwright
@@ -407,7 +407,7 @@ Tests E2E para flujos críticos:
 - [ ] Carrito persiste
 - [ ] Pagos completan (tienda + eventos)
 - [ ] QRs se generan y validan
-- [ ] Emails transaccionales se envían
+- [x] Emails transaccionales se envían
 - [ ] Panel admin funcional (productos, eventos, pedidos)
 - [ ] Stock se actualiza y alertas funcionan
 - [ ] Reportes exportan correctamente

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { X, ShoppingBag, Trash2, Plus, Minus } from "lucide-react";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { useCartStore } from "@/stores/cartStore";
 
 export function CartDrawer() {
+  const [hasMounted, setHasMounted] = useState(false);
   const {
     items,
     isOpen,
@@ -18,6 +19,11 @@ export function CartDrawer() {
     getTotal,
     getItemCount,
   } = useCartStore();
+
+  // Ensure hydration safety - only render cart content after mount
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   // Lock body scroll when drawer is open
   useEffect(() => {
@@ -42,8 +48,9 @@ export function CartDrawer() {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, closeCart]);
 
-  const itemCount = getItemCount();
-  const total = getTotal();
+  const itemCount = hasMounted ? getItemCount() : 0;
+  const total = hasMounted ? getTotal() : 0;
+  const cartItems = hasMounted ? items : [];
 
   return (
     <>
@@ -92,7 +99,7 @@ export function CartDrawer() {
           </div>
 
           {/* Content */}
-          {items.length === 0 ? (
+          {cartItems.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
               <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
                 <ShoppingBag className="w-10 h-10 text-gray-300" />
@@ -109,7 +116,7 @@ export function CartDrawer() {
               {/* Items list */}
               <div className="flex-1 overflow-y-auto px-6 py-4">
                 <ul className="space-y-4">
-                  {items.map((item) => (
+                  {cartItems.map((item) => (
                     <CartItem
                       key={item.variantId}
                       item={item}
@@ -266,8 +273,13 @@ function CartItem({ item, onRemove, onUpdateQuantity }: CartItemProps) {
 
 // Cart icon button for header
 export function CartButton({ className }: { className?: string }) {
+  const [hasMounted, setHasMounted] = useState(false);
   const { openCart, getItemCount } = useCartStore();
-  const itemCount = getItemCount();
+  const itemCount = hasMounted ? getItemCount() : 0;
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   return (
     <button

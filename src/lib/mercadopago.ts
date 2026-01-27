@@ -79,6 +79,10 @@ export async function createPreference(
       ...params,
       auto_return: params.auto_return || "approved",
       statement_descriptor: params.statement_descriptor || "CLUB SEMINARIO",
+      // Solo pago en 1 cuota (sin financiación)
+      payment_methods: {
+        installments: 1,
+      },
     }),
   });
 
