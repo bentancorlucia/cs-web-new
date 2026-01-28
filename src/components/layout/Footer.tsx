@@ -93,7 +93,7 @@ export function Footer() {
   return (
     <>
       {/* CTA Section */}
-      <section className="bg-gradient-to-b from-white to-amarillo py-12 md:py-16">
+      <section className="bg-gradient-to-b from-white via-amber-100 to-amarillo py-16 md:py-24">
         <div className="container mx-auto px-4 lg:px-8 text-center">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-bordo-dark mb-4">
             ¿Querés ser parte de nuestra familia?
