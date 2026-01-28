@@ -53,7 +53,7 @@ export default async function TiendaPage({ searchParams }: TiendaPageProps) {
         breadcrumbs={[{ label: "Tienda" }]}
       />
 
-      <section className="py-12 md:py-16 bg-gray-50">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4 lg:px-8">
           <Suspense
             fallback={

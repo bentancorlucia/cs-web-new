@@ -72,7 +72,7 @@ export default function EditarProductoPage({
           precio: product.precio,
           precio_oferta: product.precio_oferta,
           categoria_id: product.categoria_id ?? "",
-          stock: product.stock,
+          stock: product.stock ?? 0,
           sku: product.sku,
           imagen_principal: product.imagen_principal ?? "",
           imagenes: product.imagenes ?? [],
@@ -114,7 +114,6 @@ export default function EditarProductoPage({
     }
 
     setSaving(true);
-    const supabase = createClient();
 
     try {
       const slug = form.nombre
@@ -124,19 +123,23 @@ export default function EditarProductoPage({
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
 
-      const { error } = await supabase
-        .from("productos")
-        .update({
+      const response = await fetch(`/api/productos/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           ...form,
           slug,
           categoria_id: form.categoria_id || null,
           precio_oferta: form.precio_oferta || null,
           deporte: form.deporte || null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", id);
+        }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Error al actualizar producto");
+      }
 
       router.push("/admin/productos");
     } catch (error) {
@@ -280,8 +283,11 @@ export default function EditarProductoPage({
                 label="Stock disponible"
                 type="number"
                 min={0}
-                value={form.stock || ""}
-                onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
+                value={form.stock}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value, 10);
+                  setForm({ ...form, stock: isNaN(value) ? 0 : value });
+                }}
               />
             </div>
           </Card>

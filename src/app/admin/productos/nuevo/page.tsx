@@ -266,8 +266,11 @@ export default function NuevoProductoPage() {
                 label="Stock disponible"
                 type="number"
                 min={0}
-                value={form.stock || ""}
-                onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
+                value={form.stock}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value, 10);
+                  setForm({ ...form, stock: isNaN(value) ? 0 : value });
+                }}
               />
             </div>
           </Card>

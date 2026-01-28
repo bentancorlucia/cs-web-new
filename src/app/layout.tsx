@@ -20,6 +20,11 @@ export const metadata: Metadata = {
     default: siteName,
     template: `%s | ${siteName}`,
   },
+  icons: {
+    icon: "/logo-cs.png",
+    shortcut: "/logo-cs.png",
+    apple: "/apple-icon.png",
+  },
   description:
     "Club Seminario - Institución deportiva, social y cultural que reúne a la comunidad jesuita en Uruguay desde 2010. Más de 1000 socios, 22 categorías deportivas, tienda oficial y eventos.",
   keywords: [
