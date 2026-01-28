@@ -69,7 +69,6 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
 
   const handleNavClick = () => {
-    // Solo cerrar en mobile
     if (onClose && window.innerWidth < 768) {
       onClose();
     }
@@ -78,30 +77,28 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="flex h-16 items-center px-4 border-b border-white/5">
-        <Link href="/admin" className="flex items-center gap-3" onClick={handleNavClick}>
-          <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-bordo to-bordo-dark p-0.5">
-            <div className="w-full h-full bg-gray-900 rounded-[10px] flex items-center justify-center">
-              <Image
-                src="/logo-cs.png"
-                alt="Club Seminario"
-                width={28}
-                height={28}
-                className="object-contain"
-              />
-            </div>
+      <div className="flex h-20 items-center px-5 border-b border-white/10">
+        <Link href="/admin" className="flex items-center gap-3.5" onClick={handleNavClick}>
+          <div className="relative w-11 h-11 rounded-2xl overflow-hidden bg-white/10 flex items-center justify-center shadow-soft-md ring-2 ring-amarillo/40">
+            <Image
+              src="/logo-cs.png"
+              alt="Club Seminario"
+              width={32}
+              height={32}
+              className="object-contain"
+            />
           </div>
           <div className="flex flex-col">
             <span className="text-white font-semibold text-sm tracking-wide">
               Club Seminario
             </span>
-            <span className="text-gray-500 text-xs">Panel Admin</span>
+            <span className="text-amarillo text-xs font-medium">Panel Admin</span>
           </div>
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
         {navItems.map((item) => {
           const isActive =
             item.href === "/admin"
@@ -114,22 +111,17 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
               href={item.href}
               onClick={handleNavClick}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl",
+                "flex items-center gap-3.5 px-4 py-3 rounded-2xl",
                 "transition-all duration-200 group relative",
                 isActive
-                  ? "bg-gradient-to-r from-bordo/20 to-bordo/10 text-white"
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
+                  ? "bg-white/15 text-white border-l-[3px] border-amarillo -ml-[3px]"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
               )}
             >
-              {/* Active indicator */}
-              {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-bordo to-amarillo rounded-r-full" />
-              )}
-
               <span
                 className={cn(
                   "flex-shrink-0 transition-colors duration-200",
-                  isActive ? "text-bordo" : "group-hover:text-white"
+                  isActive ? "text-amarillo" : "text-white/60 group-hover:text-white"
                 )}
               >
                 {item.icon}
@@ -138,7 +130,7 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
               <span className="text-sm font-medium truncate">{item.label}</span>
 
               {item.badge && (
-                <span className="ml-auto px-2 py-0.5 text-xs font-semibold bg-bordo text-white rounded-full">
+                <span className="ml-auto px-2.5 py-0.5 text-xs font-semibold bg-amarillo text-bordo-dark rounded-full">
                   {item.badge}
                 </span>
               )}
@@ -148,17 +140,17 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-white/5">
+      <div className="p-4 border-t border-white/10">
         <Link
           href="/"
           onClick={handleNavClick}
           className={cn(
-            "flex items-center gap-3 px-3 py-2.5 rounded-xl",
-            "text-gray-400 hover:text-white hover:bg-white/5",
+            "flex items-center gap-3.5 px-4 py-3 rounded-2xl",
+            "text-white/70 hover:text-white hover:bg-white/10",
             "transition-all duration-200 group"
           )}
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -179,7 +171,7 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
         {/* Backdrop */}
         {isOpen && (
           <div
-            className="fixed inset-0 bg-black/50 z-40 transition-opacity"
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity"
             onClick={onClose}
             aria-hidden="true"
           />
@@ -188,9 +180,9 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
         {/* Drawer */}
         <aside
           className={cn(
-            "fixed inset-y-0 left-0 z-50 w-64 flex flex-col",
-            "bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950",
-            "border-r border-white/5",
+            "fixed inset-y-0 left-0 z-50 w-[280px] flex flex-col",
+            "bg-gradient-to-b from-bordo to-bordo-dark",
+            "shadow-soft-lg",
             "transform transition-transform duration-300 ease-out",
             isOpen ? "translate-x-0" : "-translate-x-full"
           )}
@@ -198,7 +190,7 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+            className="absolute top-5 right-4 p-2 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all"
             aria-label="Cerrar menú"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,9 +205,8 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
       <aside
         className={cn(
           "hidden md:flex md:flex-col",
-          "fixed left-0 top-0 z-40 h-screen w-64",
-          "bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950",
-          "border-r border-white/5"
+          "fixed left-0 top-0 z-40 h-screen w-[280px]",
+          "bg-gradient-to-b from-bordo to-bordo-dark"
         )}
       >
         <SidebarContent />

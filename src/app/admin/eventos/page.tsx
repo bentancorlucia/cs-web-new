@@ -247,7 +247,7 @@ export default function EventosPage() {
         }
       />
 
-      <div className="p-6">
+      <div className="px-5 md:px-8 py-6 md:py-8">
         <DataTable
           data={eventos}
           columns={columns}

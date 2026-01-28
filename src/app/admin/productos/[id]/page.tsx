@@ -163,7 +163,7 @@ export default function EditarProductoPage({
     return (
       <div className="min-h-screen">
         <AdminHeader title="Cargando..." />
-        <div className="p-6">
+        <div className="px-5 md:px-8 py-6 md:py-8">
           <div className="max-w-4xl mx-auto space-y-6">
             {[1, 2, 3].map((i) => (
               <Card key={i} padding="lg">
@@ -187,7 +187,7 @@ export default function EditarProductoPage({
         subtitle={form.nombre}
       />
 
-      <form onSubmit={handleSubmit} className="p-6">
+      <form onSubmit={handleSubmit} className="px-5 md:px-8 py-6 md:py-8">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Basic Info */}
           <Card padding="lg">

@@ -112,7 +112,7 @@ export function ImageUpload({
   };
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("space-y-5", className)}>
       {/* Upload Area */}
       <div
         onDragEnter={handleDrag}
@@ -121,11 +121,11 @@ export function ImageUpload({
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
         className={cn(
-          "relative p-8 border-2 border-dashed rounded-xl text-center cursor-pointer",
-          "transition-all duration-200",
+          "relative p-10 border-2 border-dashed rounded-3xl text-center cursor-pointer",
+          "transition-all duration-300",
           dragActive
-            ? "border-bordo bg-bordo/5"
-            : "border-gray-200 hover:border-gray-300 hover:bg-gray-50",
+            ? "border-bordo bg-bordo/5 scale-[1.01]"
+            : "border-slate-200 hover:border-slate-300 hover:bg-slate-50",
           uploading && "pointer-events-none opacity-50"
         )}
       >
@@ -140,31 +140,38 @@ export function ImageUpload({
 
         {uploading ? (
           <div className="flex flex-col items-center">
-            <div className="w-10 h-10 border-4 border-bordo border-t-transparent rounded-full animate-spin" />
-            <p className="mt-3 text-sm text-gray-600">Subiendo imágenes...</p>
+            <div className="w-12 h-12 border-4 border-bordo/20 border-t-bordo rounded-full animate-spin" />
+            <p className="mt-4 text-sm text-gray-500">Subiendo imágenes...</p>
           </div>
         ) : (
           <>
-            <svg
+            <div
               className={cn(
-                "mx-auto w-12 h-12 transition-colors",
-                dragActive ? "text-bordo" : "text-gray-300"
+                "mx-auto w-16 h-16 rounded-2xl flex items-center justify-center transition-colors",
+                dragActive ? "bg-bordo/10" : "bg-slate-75"
               )}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            <p className="mt-3 text-sm text-gray-600">
-              <span className="font-medium text-bordo">Click para subir</span> o arrastrá imágenes aquí
+              <svg
+                className={cn(
+                  "w-8 h-8 transition-colors",
+                  dragActive ? "text-bordo" : "text-gray-400"
+                )}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <p className="mt-4 text-sm text-gray-600">
+              <span className="font-semibold text-bordo">Click para subir</span> o arrastrá imágenes aquí
             </p>
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-2 text-xs text-gray-400">
               PNG, JPG, WEBP hasta 5MB ({value.length}/{maxImages})
             </p>
           </>
@@ -173,25 +180,25 @@ export function ImageUpload({
 
       {/* Error Message */}
       {error && (
-        <p className="text-sm text-red-600 flex items-center gap-2">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <div className="flex items-center gap-2 px-4 py-3 bg-rose-50 rounded-2xl">
+          <svg className="w-5 h-5 text-rose-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
               d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
               clipRule="evenodd"
             />
           </svg>
-          {error}
-        </p>
+          <p className="text-sm text-rose-600">{error}</p>
+        </div>
       )}
 
       {/* Image Previews */}
       {value.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
           {value.map((url, index) => (
             <div
               key={url}
-              className="relative group aspect-square rounded-xl overflow-hidden bg-gray-100"
+              className="relative group aspect-square rounded-2xl overflow-hidden bg-slate-75"
             >
               <img
                 src={url}
@@ -200,7 +207,7 @@ export function ImageUpload({
               />
 
               {/* Overlay with actions */}
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
                 {/* Move left */}
                 {index > 0 && (
                   <button
@@ -209,10 +216,10 @@ export function ImageUpload({
                       e.stopPropagation();
                       moveImage(index, index - 1);
                     }}
-                    className="p-2 bg-white/90 rounded-lg hover:bg-white transition-colors"
+                    className="p-2.5 bg-white rounded-xl hover:bg-slate-75 transition-colors shadow-soft-sm"
                     title="Mover a la izquierda"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
@@ -225,7 +232,7 @@ export function ImageUpload({
                     e.stopPropagation();
                     removeImage(index);
                   }}
-                  className="p-2 bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
+                  className="p-2.5 bg-rose-500 rounded-xl hover:bg-rose-600 transition-colors shadow-soft-sm"
                   title="Eliminar imagen"
                 >
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -241,10 +248,10 @@ export function ImageUpload({
                       e.stopPropagation();
                       moveImage(index, index + 1);
                     }}
-                    className="p-2 bg-white/90 rounded-lg hover:bg-white transition-colors"
+                    className="p-2.5 bg-white rounded-xl hover:bg-slate-75 transition-colors shadow-soft-sm"
                     title="Mover a la derecha"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </button>
@@ -253,7 +260,7 @@ export function ImageUpload({
 
               {/* Primary badge */}
               {index === 0 && (
-                <div className="absolute top-2 left-2 px-2 py-1 bg-bordo text-white text-xs font-medium rounded-lg">
+                <div className="absolute top-2.5 left-2.5 px-2.5 py-1 bg-bordo text-white text-xs font-semibold rounded-full shadow-soft-sm">
                   Principal
                 </div>
               )}
@@ -264,8 +271,8 @@ export function ImageUpload({
 
       {/* Help text */}
       {value.length > 0 && (
-        <p className="text-xs text-gray-500">
-          La primera imagen será la imagen principal del producto. Arrastrá para reordenar.
+        <p className="text-xs text-gray-400">
+          La primera imagen será la imagen principal del producto. Usá los botones para reordenar.
         </p>
       )}
     </div>

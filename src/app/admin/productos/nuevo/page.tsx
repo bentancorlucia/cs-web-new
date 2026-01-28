@@ -155,7 +155,7 @@ export default function NuevoProductoPage() {
         subtitle="Crear un nuevo producto para la tienda"
       />
 
-      <form onSubmit={handleSubmit} className="p-6">
+      <form onSubmit={handleSubmit} className="px-5 md:px-8 py-6 md:py-8">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Basic Info */}
           <Card padding="lg">

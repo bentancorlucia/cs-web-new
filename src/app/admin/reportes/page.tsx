@@ -242,8 +242,8 @@ export default function ReportesPage() {
         subtitle="Genera y exporta reportes en formato CSV"
       />
 
-      <div className="p-6">
-        <div className="max-w-5xl mx-auto space-y-6">
+      <div className="px-5 md:px-8 py-6 md:py-8">
+        <div className="max-w-5xl mx-auto space-y-8">
           {/* Report Type Selection */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {(Object.entries(reportConfigs) as [ReportType, ReportConfig][]).map(

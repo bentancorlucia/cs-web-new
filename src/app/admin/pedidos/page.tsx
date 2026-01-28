@@ -183,7 +183,7 @@ export default function PedidosPage() {
         subtitle={`${total} pedidos en total`}
       />
 
-      <div className="p-6 space-y-6">
+      <div className="px-5 md:px-8 py-6 md:py-8 space-y-5 md:space-y-6">
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-2">
           <button
@@ -192,10 +192,10 @@ export default function PedidosPage() {
               setPage(1);
             }}
             className={cn(
-              "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+              "px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200",
               selectedEstado === "todos"
-                ? "bg-gray-900 text-white"
-                : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                ? "bg-gray-900 text-white shadow-soft-sm"
+                : "bg-white text-gray-600 border border-slate-150 hover:bg-slate-75"
             )}
           >
             Todos
@@ -208,10 +208,10 @@ export default function PedidosPage() {
                 setPage(1);
               }}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                "px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200",
                 selectedEstado === option.value
-                  ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                  ? "bg-gray-900 text-white shadow-soft-sm"
+                  : "bg-white text-gray-600 border border-slate-150 hover:bg-slate-75"
               )}
             >
               {option.label}

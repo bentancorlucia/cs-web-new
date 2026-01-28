@@ -85,13 +85,13 @@ export function DataTable<T>({
     selectedRows.length > 0 && selectedRows.length === data.length;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-3xl shadow-soft-sm border border-bordo/20 overflow-hidden">
       {/* Search bar */}
       {searchable && onSearch && (
-        <div className="px-6 py-4 border-b border-gray-100">
+        <div className="px-6 py-5 border-b border-bordo/20">
           <div className="relative max-w-md">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -108,10 +108,10 @@ export function DataTable<T>({
               placeholder={searchPlaceholder}
               onChange={(e) => onSearch(e.target.value)}
               className={cn(
-                "w-full pl-10 pr-4 py-2.5 rounded-xl",
-                "border border-gray-200 bg-gray-50",
+                "w-full pl-12 pr-4 py-3 rounded-2xl",
+                "border-2 border-bordo/20 bg-slate-25",
                 "text-sm text-gray-900 placeholder-gray-400",
-                "focus:outline-none focus:ring-2 focus:ring-bordo/20 focus:border-bordo",
+                "focus:outline-none focus:bg-white focus:border-bordo/30 focus:ring-4 focus:ring-bordo/5",
                 "transition-all duration-200"
               )}
             />
@@ -123,7 +123,7 @@ export function DataTable<T>({
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-50/50">
+            <tr className="bg-bordo">
               {(onSelectRow || onSelectAll) && (
                 <th className="w-12 px-6 py-4">
                   <input
@@ -131,8 +131,8 @@ export function DataTable<T>({
                     checked={allSelected}
                     onChange={onSelectAll}
                     className={cn(
-                      "w-4 h-4 rounded border-gray-300",
-                      "text-bordo focus:ring-bordo/20"
+                      "w-4 h-4 rounded-md border-white/30 bg-white/10",
+                      "text-amarillo focus:ring-amarillo/20"
                     )}
                   />
                 </th>
@@ -141,8 +141,8 @@ export function DataTable<T>({
                 <th
                   key={column.key}
                   className={cn(
-                    "px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider",
-                    column.sortable && "cursor-pointer select-none hover:text-gray-700",
+                    "px-6 py-4 text-left text-xs font-semibold text-white/90 uppercase tracking-wider",
+                    column.sortable && "cursor-pointer select-none hover:text-white",
                     column.className
                   )}
                   onClick={column.sortable ? () => handleSort(column.key) : undefined}
@@ -150,14 +150,14 @@ export function DataTable<T>({
                   <div className="flex items-center gap-2">
                     {column.label}
                     {column.sortable && (
-                      <span className="text-gray-300">
+                      <span className="text-white/40">
                         {sortConfig?.key === column.key ? (
                           sortConfig.direction === "asc" ? (
-                            <svg className="w-4 h-4 text-bordo" fill="currentColor" viewBox="0 0 20 20">
+                            <svg className="w-4 h-4 text-amarillo" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
                             </svg>
                           ) : (
-                            <svg className="w-4 h-4 text-bordo" fill="currentColor" viewBox="0 0 20 20">
+                            <svg className="w-4 h-4 text-amarillo" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
                           )
@@ -172,30 +172,30 @@ export function DataTable<T>({
                 </th>
               ))}
               {actions && (
-                <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-right text-xs font-semibold text-white/90 uppercase tracking-wider">
                   Acciones
                 </th>
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-bordo/10">
             {loading ? (
               // Skeleton loading
               Array.from({ length: 5 }).map((_, i) => (
                 <tr key={i} className="animate-pulse">
                   {(onSelectRow || onSelectAll) && (
-                    <td className="px-6 py-4">
-                      <div className="w-4 h-4 bg-gray-200 rounded" />
+                    <td className="px-6 py-5">
+                      <div className="w-4 h-4 bg-slate-75 rounded" />
                     </td>
                   )}
                   {columns.map((column) => (
-                    <td key={column.key} className="px-6 py-4">
-                      <div className="h-4 bg-gray-200 rounded w-3/4" />
+                    <td key={column.key} className="px-6 py-5">
+                      <div className="h-4 bg-slate-75 rounded-full w-3/4" />
                     </td>
                   ))}
                   {actions && (
-                    <td className="px-6 py-4">
-                      <div className="h-8 bg-gray-200 rounded w-20 ml-auto" />
+                    <td className="px-6 py-5">
+                      <div className="h-8 bg-slate-75 rounded-xl w-20 ml-auto" />
                     </td>
                   )}
                 </tr>
@@ -204,12 +204,12 @@ export function DataTable<T>({
               <tr>
                 <td
                   colSpan={columns.length + (actions ? 1 : 0) + (onSelectRow ? 1 : 0)}
-                  className="px-6 py-12 text-center"
+                  className="px-6 py-16 text-center"
                 >
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-slate-75 flex items-center justify-center">
                       <svg
-                        className="w-6 h-6 text-gray-400"
+                        className="w-7 h-7 text-gray-400"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -222,7 +222,7 @@ export function DataTable<T>({
                         />
                       </svg>
                     </div>
-                    <p className="text-gray-500 text-sm">{emptyMessage}</p>
+                    <p className="text-gray-400 text-sm">{emptyMessage}</p>
                   </div>
                 </td>
               </tr>
@@ -236,21 +236,21 @@ export function DataTable<T>({
                     key={key}
                     onClick={onRowClick ? () => onRowClick(item) : undefined}
                     className={cn(
-                      "transition-colors duration-150",
+                      "transition-colors duration-200 group",
                       onRowClick && "cursor-pointer",
                       isSelected
                         ? "bg-bordo/5"
-                        : "hover:bg-gray-50/50"
+                        : "hover:bg-slate-75"
                     )}
                   >
                     {(onSelectRow || onSelectAll) && (
-                      <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                      <td className="px-6 py-5" onClick={(e) => e.stopPropagation()}>
                         <input
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => onSelectRow?.(key)}
                           className={cn(
-                            "w-4 h-4 rounded border-gray-300",
+                            "w-4 h-4 rounded-md border-gray-300",
                             "text-bordo focus:ring-bordo/20"
                           )}
                         />
@@ -260,7 +260,7 @@ export function DataTable<T>({
                       <td
                         key={column.key}
                         className={cn(
-                          "px-6 py-4 text-sm text-gray-900",
+                          "px-6 py-5 text-sm text-gray-900",
                           column.className
                         )}
                       >
@@ -271,10 +271,12 @@ export function DataTable<T>({
                     ))}
                     {actions && (
                       <td
-                        className="px-6 py-4 text-right"
+                        className="px-6 py-5 text-right"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        {actions(item)}
+                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          {actions(item)}
+                        </div>
                       </td>
                     )}
                   </tr>
@@ -287,29 +289,29 @@ export function DataTable<T>({
 
       {/* Pagination */}
       {pagination && pagination.total > 0 && (
-        <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
-          <p className="text-sm text-gray-500">
+        <div className="px-6 py-4 border-t border-bordo/20 flex items-center justify-between">
+          <p className="text-sm text-gray-400">
             Mostrando{" "}
-            <span className="font-medium">
+            <span className="font-medium text-gray-600">
               {(pagination.page - 1) * pagination.pageSize + 1}
             </span>{" "}
             a{" "}
-            <span className="font-medium">
+            <span className="font-medium text-gray-600">
               {Math.min(pagination.page * pagination.pageSize, pagination.total)}
             </span>{" "}
-            de <span className="font-medium">{pagination.total}</span> resultados
+            de <span className="font-medium text-gray-600">{pagination.total}</span> resultados
           </p>
           <div className="flex items-center gap-2">
             <button
               onClick={() => pagination.onPageChange(pagination.page - 1)}
               disabled={pagination.page === 1}
               className={cn(
-                "px-3 py-2 rounded-lg text-sm font-medium",
-                "border border-gray-200",
-                "transition-colors duration-200",
+                "px-4 py-2 rounded-xl text-sm font-medium",
+                "border border-bordo/20",
+                "transition-all duration-200",
                 pagination.page === 1
-                  ? "text-gray-300 cursor-not-allowed"
-                  : "text-gray-600 hover:bg-gray-50 hover:border-gray-300"
+                  ? "text-gray-300 cursor-not-allowed bg-slate-50"
+                  : "text-bordo hover:bg-bordo/5 hover:border-bordo/30"
               )}
             >
               Anterior
@@ -318,12 +320,11 @@ export function DataTable<T>({
               onClick={() => pagination.onPageChange(pagination.page + 1)}
               disabled={pagination.page * pagination.pageSize >= pagination.total}
               className={cn(
-                "px-3 py-2 rounded-lg text-sm font-medium",
-                "border border-gray-200",
-                "transition-colors duration-200",
+                "px-4 py-2 rounded-xl text-sm font-medium",
+                "transition-all duration-200",
                 pagination.page * pagination.pageSize >= pagination.total
-                  ? "text-gray-300 cursor-not-allowed"
-                  : "text-gray-600 hover:bg-gray-50 hover:border-gray-300"
+                  ? "text-gray-300 cursor-not-allowed bg-slate-50 border border-bordo/20"
+                  : "bg-bordo text-white hover:bg-bordo-dark"
               )}
             >
               Siguiente

@@ -120,7 +120,7 @@ export default function ProductosPage() {
       sortable: true,
       render: (product) => (
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-slate-75 overflow-hidden flex-shrink-0">
             {product.imagen_principal ? (
               <img
                 src={product.imagen_principal}
@@ -231,10 +231,10 @@ export default function ProductosPage() {
         }
       />
 
-      <div className="p-6">
+      <div className="px-5 md:px-8 py-6 md:py-8">
         {/* Bulk Actions */}
         {selectedProducts.length > 0 && (
-          <div className="mb-4 p-4 bg-bordo/5 border border-bordo/20 rounded-xl flex items-center justify-between">
+          <div className="mb-5 p-4 bg-bordo/5 border border-bordo/20 rounded-2xl flex items-center justify-between">
             <span className="text-sm text-gray-700">
               <strong>{selectedProducts.length}</strong> productos seleccionados
             </span>

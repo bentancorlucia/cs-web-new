@@ -152,7 +152,7 @@ export default function AdminDashboard() {
       render: (order) => (
         <div>
           <p className="font-medium text-gray-900">{order.nombre_completo}</p>
-          <p className="text-sm text-gray-500">{order.email}</p>
+          <p className="text-sm text-gray-400">{order.email}</p>
         </div>
       ),
     },
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
       key: "created_at",
       label: "Fecha",
       render: (order) => (
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-400">
           {formatDate(order.created_at)}
         </span>
       ),
@@ -188,7 +188,7 @@ export default function AdminDashboard() {
       render: (product) => (
         <div className="flex items-center gap-3">
           {product.imagen_principal && (
-            <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-slate-75 overflow-hidden flex-shrink-0">
               <img
                 src={product.imagen_principal}
                 alt=""
@@ -204,7 +204,7 @@ export default function AdminDashboard() {
       key: "sku",
       label: "SKU",
       render: (product) => (
-        <span className="font-mono text-sm text-gray-500">{product.sku}</span>
+        <span className="font-mono text-sm text-gray-400">{product.sku}</span>
       ),
     },
     {
@@ -214,7 +214,7 @@ export default function AdminDashboard() {
         <span
           className={`font-semibold ${
             product.stock === 0
-              ? "text-red-600"
+              ? "text-rose-600"
               : product.stock < 5
               ? "text-amber-600"
               : "text-gray-900"
@@ -230,12 +230,12 @@ export default function AdminDashboard() {
     <div className="min-h-screen">
       <AdminHeader
         title="Dashboard"
-        subtitle={`Bienvenido al panel de administración`}
+        subtitle="Bienvenido al panel de administración"
       />
 
-      <div className="p-6 space-y-6">
+      <div className="px-5 md:px-8 py-6 md:py-8 space-y-6 md:space-y-8">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           <StatsCard
             title="Ventas Hoy"
             value={formatPrice(stats.ventasHoy)}
@@ -284,13 +284,28 @@ export default function AdminDashboard() {
 
         {/* Next Event Banner */}
         {stats.proximoEvento && (
-          <div className="bg-gradient-to-r from-bordo to-bordo-dark rounded-2xl p-6 text-white overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
+          <div className="bg-gradient-to-br from-bordo via-bordo to-bordo-dark rounded-3xl p-8 text-white overflow-hidden relative">
+            {/* Decorative pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <defs>
+                  <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                    <circle cx="1" cy="1" r="1" fill="currentColor" />
+                  </pattern>
+                </defs>
+                <rect width="100" height="100" fill="url(#grid)" />
+              </svg>
+            </div>
+            <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/3" />
+
             <div className="relative flex items-center justify-between">
-              <div className="space-y-2">
-                <p className="text-white/70 text-sm font-medium">Próximo Evento</p>
+              <div className="space-y-3">
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 text-white/90 text-xs font-medium">
+                  <span className="w-2 h-2 rounded-full bg-amarillo animate-pulse" />
+                  Próximo Evento
+                </span>
                 <h3 className="text-2xl font-bold">{stats.proximoEvento.titulo}</h3>
-                <p className="text-white/80">
+                <p className="text-white/70">
                   {formatDate(stats.proximoEvento.fecha_evento)}
                   {stats.proximoEvento.ubicacion && ` · ${stats.proximoEvento.ubicacion}`}
                 </p>
@@ -305,17 +320,22 @@ export default function AdminDashboard() {
         )}
 
         {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-start">
           {/* Recent Orders */}
           <div className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-semibold text-gray-900">Pedidos Recientes</h2>
               <Link href="/admin/pedidos">
-                <Button variant="ghost" size="sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  rightIcon={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  }
+                >
                   Ver todos
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
                 </Button>
               </Link>
             </div>
@@ -330,10 +350,10 @@ export default function AdminDashboard() {
 
           {/* Low Stock Alert */}
           <div>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-semibold text-gray-900">Stock Bajo</h2>
               {stats.productosStockBajo > 0 && (
-                <span className="px-2.5 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
+                <span className="px-3 py-1 bg-rose-50 text-rose-600 text-xs font-semibold rounded-full">
                   {stats.productosStockBajo} productos
                 </span>
               )}
@@ -356,52 +376,52 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-gradient-to-br from-white to-bordo/5 rounded-3xl p-8 shadow-soft-sm border border-bordo/10">
+          <h2 className="text-lg font-semibold text-bordo mb-6">Acciones Rápidas</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             <Link
               href="/admin/productos/nuevo"
-              className="flex flex-col items-center gap-3 p-4 rounded-xl border-2 border-dashed border-gray-200 hover:border-bordo/30 hover:bg-bordo/5 transition-all duration-200 group"
+              className="flex flex-col items-center gap-4 p-6 rounded-3xl bg-white shadow-soft-sm hover:shadow-soft-md transition-all duration-300 group border border-transparent hover:border-bordo/20"
             >
-              <div className="w-12 h-12 rounded-xl bg-gray-100 group-hover:bg-bordo/10 flex items-center justify-center transition-colors">
-                <svg className="w-6 h-6 text-gray-400 group-hover:text-bordo transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 rounded-2xl bg-bordo/5 group-hover:bg-bordo group-hover:scale-105 flex items-center justify-center transition-all duration-300">
+                <svg className="w-7 h-7 text-bordo group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </div>
-              <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900">Nuevo Producto</span>
+              <span className="text-sm font-medium text-gray-600 group-hover:text-bordo transition-colors">Nuevo Producto</span>
             </Link>
             <Link
               href="/admin/eventos/nuevo"
-              className="flex flex-col items-center gap-3 p-4 rounded-xl border-2 border-dashed border-gray-200 hover:border-bordo/30 hover:bg-bordo/5 transition-all duration-200 group"
+              className="flex flex-col items-center gap-4 p-6 rounded-3xl bg-white shadow-soft-sm hover:shadow-soft-md transition-all duration-300 group border border-transparent hover:border-amarillo/30"
             >
-              <div className="w-12 h-12 rounded-xl bg-gray-100 group-hover:bg-bordo/10 flex items-center justify-center transition-colors">
-                <svg className="w-6 h-6 text-gray-400 group-hover:text-bordo transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 rounded-2xl bg-amarillo/10 group-hover:bg-amarillo group-hover:scale-105 flex items-center justify-center transition-all duration-300">
+                <svg className="w-7 h-7 text-amarillo-dark group-hover:text-bordo-dark transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900">Nuevo Evento</span>
+              <span className="text-sm font-medium text-gray-600 group-hover:text-amarillo-dark transition-colors">Nuevo Evento</span>
             </Link>
             <Link
               href="/admin/pedidos?estado=pendiente"
-              className="flex flex-col items-center gap-3 p-4 rounded-xl border-2 border-dashed border-gray-200 hover:border-bordo/30 hover:bg-bordo/5 transition-all duration-200 group"
+              className="flex flex-col items-center gap-4 p-6 rounded-3xl bg-white shadow-soft-sm hover:shadow-soft-md transition-all duration-300 group border border-transparent hover:border-bordo/20"
             >
-              <div className="w-12 h-12 rounded-xl bg-gray-100 group-hover:bg-bordo/10 flex items-center justify-center transition-colors">
-                <svg className="w-6 h-6 text-gray-400 group-hover:text-bordo transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 rounded-2xl bg-bordo/5 group-hover:bg-bordo group-hover:scale-105 flex items-center justify-center transition-all duration-300">
+                <svg className="w-7 h-7 text-bordo group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
-              <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900">Pedidos Pendientes</span>
+              <span className="text-sm font-medium text-gray-600 group-hover:text-bordo transition-colors">Pedidos Pendientes</span>
             </Link>
             <Link
               href="/admin/reportes"
-              className="flex flex-col items-center gap-3 p-4 rounded-xl border-2 border-dashed border-gray-200 hover:border-bordo/30 hover:bg-bordo/5 transition-all duration-200 group"
+              className="flex flex-col items-center gap-4 p-6 rounded-3xl bg-white shadow-soft-sm hover:shadow-soft-md transition-all duration-300 group border border-transparent hover:border-amarillo/30"
             >
-              <div className="w-12 h-12 rounded-xl bg-gray-100 group-hover:bg-bordo/10 flex items-center justify-center transition-colors">
-                <svg className="w-6 h-6 text-gray-400 group-hover:text-bordo transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 rounded-2xl bg-amarillo/10 group-hover:bg-amarillo group-hover:scale-105 flex items-center justify-center transition-all duration-300">
+                <svg className="w-7 h-7 text-amarillo-dark group-hover:text-bordo-dark transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900">Ver Reportes</span>
+              <span className="text-sm font-medium text-gray-600 group-hover:text-amarillo-dark transition-colors">Ver Reportes</span>
             </Link>
           </div>
         </div>

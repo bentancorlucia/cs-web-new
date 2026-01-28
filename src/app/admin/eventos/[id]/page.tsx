@@ -286,7 +286,7 @@ export default function EditarEventoPage({
     return (
       <div className="min-h-screen">
         <AdminHeader title="Cargando..." />
-        <div className="p-6">
+        <div className="px-5 md:px-8 py-6 md:py-8">
           <div className="max-w-4xl mx-auto">
             <Card padding="lg">
               <div className="animate-pulse space-y-4">
@@ -335,7 +335,7 @@ export default function EditarEventoPage({
         }
       />
 
-      <div className="p-6">
+      <div className="px-5 md:px-8 py-6 md:py-8">
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
