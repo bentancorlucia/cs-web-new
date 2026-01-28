@@ -96,10 +96,10 @@ export function Footer() {
       <section className="bg-gradient-to-b from-white via-amber-100 to-amarillo py-16 md:py-24">
         <div className="container mx-auto px-4 lg:px-8 text-center">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-bordo-dark mb-4">
-            ¿Querés ser parte de nuestra familia?
+            ¿Querés ser parte de la Bordó?
           </h2>
           <p className="text-bordo-dark/80 mb-6 max-w-2xl mx-auto">
-            Unite a más de 1000 socios que comparten los valores ignacianos en el deporte.
+            Más de 1000 socios ya forman parte de esta familia
           </p>
           <Link
             href="/socios"
