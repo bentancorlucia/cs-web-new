@@ -1,14 +1,26 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { beneficios, categorias } from "@/data/beneficios";
 
 export function BeneficiosContent() {
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todas");
   const introRef = useScrollReveal<HTMLDivElement>({ animation: "fade-up", delay: 100 });
   const contentRef = useScrollReveal<HTMLDivElement>({ animation: "fade-up", delay: 200 });
   const ctaRef = useScrollReveal<HTMLDivElement>({ animation: "fade-up", delay: 300 });
+
+  const beneficiosFiltrados = categoriaSeleccionada === "Todas"
+    ? beneficios
+    : beneficios.filter((b) => b.categoria === categoriaSeleccionada);
+
+  const categoriasConBeneficios = categorias.filter(
+    (cat) => cat.nombre === "Todas" || beneficios.some((b) => b.categoria === cat.nombre)
+  );
 
   return (
     <>
@@ -36,70 +48,83 @@ export function BeneficiosContent() {
               </p>
             </div>
 
-            {/* Content placeholder */}
-            <div
-              ref={contentRef}
-              className="bg-white rounded-2xl p-8 md:p-12 shadow-lg border border-stone-100 text-center"
-            >
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amarillo/20 to-bordo/10 flex items-center justify-center mx-auto mb-6">
-                <svg
-                  className="w-10 h-10 text-bordo"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-                  />
-                </svg>
-              </div>
-
-              <h2 className="text-2xl font-bold text-bordo mb-4">
-                Beneficios exclusivos para socios
-              </h2>
-
-              <p className="text-bordo-dark/70 max-w-lg mx-auto mb-8">
-                Como socio del Club Seminario accedés a descuentos que van desde
-                el 5% al 50% en rubros tan variados como gastronomía, servicio
-                automotriz, catering, tecnología, veterinaria, hotelería,
-                indumentaria, bienestar, estética y deporte.
-              </p>
-
-              {/* Categories preview */}
-              <div className="flex flex-wrap justify-center gap-2 mb-8">
-                {[
-                  "Gastronomía",
-                  "Servicio Automotriz",
-                  "Tecnología",
-                  "Veterinaria",
-                  "Hotelería",
-                  "Indumentaria",
-                  "Bienestar",
-                  "Deporte",
-                ].map((cat) => (
-                  <span
-                    key={cat}
-                    className="px-3 py-1.5 bg-stone-100 text-bordo-dark/70 text-sm rounded-full"
-                  >
-                    {cat}
-                  </span>
+            {/* Filtro de categorías */}
+            <div ref={contentRef} className="mb-8">
+              <label htmlFor="categoria" className="block text-sm font-medium text-bordo-dark/70 mb-2">
+                Filtrar por categoría:
+              </label>
+              <select
+                id="categoria"
+                value={categoriaSeleccionada}
+                onChange={(e) => setCategoriaSeleccionada(e.target.value)}
+                className="w-full sm:w-auto px-4 py-2 border border-stone-200 rounded-lg bg-white text-bordo-dark focus:outline-none focus:ring-2 focus:ring-bordo/20 focus:border-bordo"
+              >
+                {categoriasConBeneficios.map((cat) => (
+                  <option key={cat.id} value={cat.nombre}>
+                    {cat.nombre}
+                  </option>
                 ))}
-              </div>
+              </select>
+            </div>
 
-              <div className="bg-gradient-to-br from-bordo/5 to-amarillo/5 rounded-xl p-6 border border-bordo/10">
-                <p className="text-bordo-dark/80 text-sm">
-                  Para conocer todos los beneficios vigentes y cómo acceder a
-                  ellos, contactate con la secretaría del club.
-                </p>
-              </div>
+            {/* Lista de beneficios */}
+            <div className="grid gap-4 mb-12">
+              {beneficiosFiltrados.length > 0 ? (
+                beneficiosFiltrados.map((beneficio) => (
+                  <div
+                    key={beneficio.id}
+                    className="bg-white rounded-xl p-6 shadow-sm border border-stone-100 flex items-center gap-6 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex-shrink-0 w-20 h-20 bg-stone-50 rounded-lg flex items-center justify-center overflow-hidden">
+                      {beneficio.logo ? (
+                        <Image
+                          src={beneficio.logo}
+                          alt={beneficio.empresa}
+                          width={64}
+                          height={64}
+                          className="object-contain"
+                        />
+                      ) : (
+                        <span className="text-2xl font-bold text-bordo/30">
+                          {beneficio.empresa.charAt(0)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-bordo text-lg">
+                        {beneficio.empresa}
+                      </h3>
+                      <p className="text-bordo-dark/80 font-medium">
+                        {beneficio.descuento}
+                      </p>
+                      {beneficio.descripcion && (
+                        <p className="text-sm text-bordo-dark/60 mt-1">
+                          {beneficio.descripcion}
+                        </p>
+                      )}
+                      <span className="inline-block mt-2 px-2 py-0.5 bg-stone-100 text-bordo-dark/60 text-xs rounded-full">
+                        {beneficio.categoria}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-12 text-bordo-dark/60">
+                  No se encontraron beneficios en esta categoría.
+                </div>
+              )}
+            </div>
+
+            {/* Nota */}
+            <div className="bg-gradient-to-br from-bordo/5 to-amarillo/5 rounded-xl p-6 border border-bordo/10 mb-12">
+              <p className="text-bordo-dark/80 text-sm text-center">
+                Para conocer todos los beneficios vigentes y cómo acceder a
+                ellos, contactate con la secretaría del club.
+              </p>
             </div>
 
             {/* CTA */}
-            <div ref={ctaRef} className="mt-12 text-center">
+            <div ref={ctaRef} className="text-center">
               <p className="text-bordo-dark/70 mb-6">
                 ¿Todavía no sos socio? Unite a nuestra familia y accedé a todos
                 estos beneficios.

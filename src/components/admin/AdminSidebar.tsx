@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -61,23 +60,26 @@ const navItems: NavItem[] = [
   },
 ];
 
-export function AdminSidebar() {
-  const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+interface AdminSidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
 
-  return (
-    <aside
-      className={cn(
-        "fixed left-0 top-0 z-40 h-screen",
-        "bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950",
-        "border-r border-white/5",
-        "transition-all duration-300 ease-out",
-        collapsed ? "w-20" : "w-64"
-      )}
-    >
+export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
+  const pathname = usePathname();
+
+  const handleNavClick = () => {
+    // Solo cerrar en mobile
+    if (onClose && window.innerWidth < 768) {
+      onClose();
+    }
+  };
+
+  const SidebarContent = () => (
+    <>
       {/* Logo */}
-      <div className="flex h-16 items-center justify-between px-4 border-b border-white/5">
-        <Link href="/admin" className="flex items-center gap-3">
+      <div className="flex h-16 items-center px-4 border-b border-white/5">
+        <Link href="/admin" className="flex items-center gap-3" onClick={handleNavClick}>
           <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-bordo to-bordo-dark p-0.5">
             <div className="w-full h-full bg-gray-900 rounded-[10px] flex items-center justify-center">
               <Image
@@ -89,41 +91,13 @@ export function AdminSidebar() {
               />
             </div>
           </div>
-          {!collapsed && (
-            <div className="flex flex-col">
-              <span className="text-white font-semibold text-sm tracking-wide">
-                Club Seminario
-              </span>
-              <span className="text-gray-500 text-xs">Panel Admin</span>
-            </div>
-          )}
+          <div className="flex flex-col">
+            <span className="text-white font-semibold text-sm tracking-wide">
+              Club Seminario
+            </span>
+            <span className="text-gray-500 text-xs">Panel Admin</span>
+          </div>
         </Link>
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className={cn(
-            "p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5",
-            "transition-colors duration-200",
-            collapsed && "mx-auto"
-          )}
-          aria-label={collapsed ? "Expandir menú" : "Colapsar menú"}
-        >
-          <svg
-            className={cn(
-              "w-5 h-5 transition-transform duration-300",
-              collapsed && "rotate-180"
-            )}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-            />
-          </svg>
-        </button>
       </div>
 
       {/* Navigation */}
@@ -138,6 +112,7 @@ export function AdminSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={handleNavClick}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl",
                 "transition-all duration-200 group relative",
@@ -160,21 +135,12 @@ export function AdminSidebar() {
                 {item.icon}
               </span>
 
-              {!collapsed && (
-                <span className="text-sm font-medium truncate">{item.label}</span>
-              )}
+              <span className="text-sm font-medium truncate">{item.label}</span>
 
-              {!collapsed && item.badge && (
+              {item.badge && (
                 <span className="ml-auto px-2 py-0.5 text-xs font-semibold bg-bordo text-white rounded-full">
                   {item.badge}
                 </span>
-              )}
-
-              {/* Tooltip for collapsed state */}
-              {collapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
-                  {item.label}
-                </div>
               )}
             </Link>
           );
@@ -185,6 +151,7 @@ export function AdminSidebar() {
       <div className="p-4 border-t border-white/5">
         <Link
           href="/"
+          onClick={handleNavClick}
           className={cn(
             "flex items-center gap-3 px-3 py-2.5 rounded-xl",
             "text-gray-400 hover:text-white hover:bg-white/5",
@@ -199,9 +166,60 @@ export function AdminSidebar() {
               d="M10 19l-7-7m0 0l7-7m-7 7h18"
             />
           </svg>
-          {!collapsed && <span className="text-sm font-medium">Volver al sitio</span>}
+          <span className="text-sm font-medium">Volver al sitio</span>
         </Link>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile drawer */}
+      <div className="md:hidden">
+        {/* Backdrop */}
+        {isOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 transition-opacity"
+            onClick={onClose}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Drawer */}
+        <aside
+          className={cn(
+            "fixed inset-y-0 left-0 z-50 w-64 flex flex-col",
+            "bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950",
+            "border-r border-white/5",
+            "transform transition-transform duration-300 ease-out",
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          )}
+        >
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+            aria-label="Cerrar menú"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <SidebarContent />
+        </aside>
+      </div>
+
+      {/* Desktop sidebar */}
+      <aside
+        className={cn(
+          "hidden md:flex md:flex-col",
+          "fixed left-0 top-0 z-40 h-screen w-64",
+          "bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950",
+          "border-r border-white/5"
+        )}
+      >
+        <SidebarContent />
+      </aside>
+    </>
   );
 }

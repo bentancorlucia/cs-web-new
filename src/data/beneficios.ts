@@ -29,6 +29,35 @@ export const categorias: CategoriaBeneficio[] = [
   { id: 13, nombre: "Vestimenta y accesorios" },
 ];
 
-// Los beneficios se cargan dinámicamente desde el backend
-// Este archivo sirve como referencia de la estructura
-export const beneficios: Beneficio[] = [];
+export const beneficios: Beneficio[] = [
+  {
+    id: 1,
+    empresa: "UCU",
+    descuento: "10% de descuento",
+    descripcion: "",
+    categoria: "Educación",
+    logo: "/logos/logo-ucu.png",
+  },
+  {
+    id: 2,
+    empresa: "OMNIA Wellness",
+    descuento: "Descuentos",
+    descripcion: "",
+    categoria: "Cuidado Personal",
+  },
+  {
+    id: 3,
+    empresa: "MS Recovery",
+    descuento: "Descuentos",
+    descripcion: "",
+    categoria: "Servicio a deportistas",
+  },
+  {
+    id: 4,
+    empresa: "New Balance",
+    descuento: "20% de descuento",
+    descripcion: "Presentando la tarjeta de socio",
+    categoria: "Vestimenta y accesorios",
+    logo: "/logos/logo-nb.png",
+  },
+];

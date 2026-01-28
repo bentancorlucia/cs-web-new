@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import { useAdmin } from "@/contexts/AdminContext";
 import { cn } from "@/lib/utils";
 
 interface AdminHeaderProps {
@@ -12,6 +13,7 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({ title, subtitle, actions }: AdminHeaderProps) {
+  const { openSidebar } = useAdmin();
   const { user, profile, signOut } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -32,17 +34,30 @@ export function AdminHeader({ title, subtitle, actions }: AdminHeaderProps) {
 
   return (
     <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-200/50">
-      <div className="flex h-16 items-center justify-between px-6">
-        {/* Left side - Title */}
-        <div className="flex flex-col">
-          {title && (
-            <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
-              {title}
-            </h1>
-          )}
-          {subtitle && (
-            <p className="text-sm text-gray-500">{subtitle}</p>
-          )}
+      <div className="flex h-16 items-center justify-between px-4 md:px-6">
+        {/* Left side - Menu button (mobile) + Title */}
+        <div className="flex items-center gap-3">
+          {/* Hamburger menu - mobile only */}
+          <button
+            onClick={openSidebar}
+            className="md:hidden p-2 -ml-2 rounded-xl text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            aria-label="Abrir menú"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          <div className="flex flex-col">
+            {title && (
+              <h1 className="text-lg md:text-xl font-semibold text-gray-900 tracking-tight">
+                {title}
+              </h1>
+            )}
+            {subtitle && (
+              <p className="text-xs md:text-sm text-gray-500 hidden sm:block">{subtitle}</p>
+            )}
+          </div>
         </div>
 
         {/* Right side - Actions & User */}
@@ -79,7 +94,7 @@ export function AdminHeader({ title, subtitle, actions }: AdminHeaderProps) {
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
               className={cn(
-                "flex items-center gap-3 p-1.5 pr-3 rounded-xl",
+                "flex items-center gap-3 p-1.5 md:pr-3 rounded-xl",
                 "hover:bg-gray-100 transition-colors duration-200",
                 showUserMenu && "bg-gray-100"
               )}
@@ -87,7 +102,7 @@ export function AdminHeader({ title, subtitle, actions }: AdminHeaderProps) {
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-bordo to-bordo-dark flex items-center justify-center">
                 <span className="text-white text-sm font-semibold">{initials}</span>
               </div>
-              <div className="flex flex-col items-start">
+              <div className="hidden md:flex flex-col items-start">
                 <span className="text-sm font-medium text-gray-900">
                   {profile?.nombre} {profile?.apellido}
                 </span>
@@ -95,7 +110,7 @@ export function AdminHeader({ title, subtitle, actions }: AdminHeaderProps) {
               </div>
               <svg
                 className={cn(
-                  "w-4 h-4 text-gray-400 transition-transform duration-200",
+                  "hidden md:block w-4 h-4 text-gray-400 transition-transform duration-200",
                   showUserMenu && "rotate-180"
                 )}
                 fill="none"

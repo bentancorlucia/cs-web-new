@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { AdminSidebar } from "@/components/admin";
+import { AdminProvider } from "@/contexts/AdminContext";
 import { cn } from "@/lib/utils";
 
 export default function AdminLayout({
@@ -13,6 +14,7 @@ export default function AdminLayout({
 }) {
   const { profile, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -46,14 +48,19 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <AdminSidebar />
+      <AdminSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
       <main
         className={cn(
-          "ml-64 min-h-screen",
+          "ml-0 md:ml-64 min-h-screen",
           "transition-[margin] duration-300"
         )}
       >
-        {children}
+        <AdminProvider openSidebar={() => setSidebarOpen(true)}>
+          {children}
+        </AdminProvider>
       </main>
     </div>
   );
