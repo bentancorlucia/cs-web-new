@@ -151,23 +151,22 @@ export function Header() {
                   }
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "relative px-4 py-2 text-base font-medium rounded-lg transition-all duration-300",
-                      "hover:bg-white/10",
-                      isActive(item.href)
-                        ? isScrolled
-                          ? "text-amarillo"
-                          : "text-amarillo drop-shadow-md"
-                        : isScrolled
-                          ? "text-white/90 hover:text-white"
-                          : "text-white/90 hover:text-white drop-shadow-sm",
-                      "flex items-center gap-1"
-                    )}
-                  >
-                    {item.label}
-                    {item.children && (
+                  {item.children ? (
+                    <span
+                      className={cn(
+                        "relative px-4 py-2 text-base font-medium rounded-lg transition-all duration-300 cursor-default",
+                        "hover:bg-white/10",
+                        isActive(item.href)
+                          ? isScrolled
+                            ? "text-amarillo"
+                            : "text-amarillo drop-shadow-md"
+                          : isScrolled
+                            ? "text-white/90 hover:text-white"
+                            : "text-white/90 hover:text-white drop-shadow-sm",
+                        "flex items-center gap-1"
+                      )}
+                    >
+                      {item.label}
                       <svg
                         className={cn(
                           "w-4 h-4 transition-transform duration-200",
@@ -184,12 +183,32 @@ export function Header() {
                           d="M19 9l-7 7-7-7"
                         />
                       </svg>
-                    )}
-                    {/* Active indicator */}
-                    {isActive(item.href) && (
-                      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-amarillo rounded-full" />
-                    )}
-                  </Link>
+                      {isActive(item.href) && (
+                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-amarillo rounded-full" />
+                      )}
+                    </span>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "relative px-4 py-2 text-base font-medium rounded-lg transition-all duration-300",
+                        "hover:bg-white/10",
+                        isActive(item.href)
+                          ? isScrolled
+                            ? "text-amarillo"
+                            : "text-amarillo drop-shadow-md"
+                          : isScrolled
+                            ? "text-white/90 hover:text-white"
+                            : "text-white/90 hover:text-white drop-shadow-sm",
+                        "flex items-center gap-1"
+                      )}
+                    >
+                      {item.label}
+                      {isActive(item.href) && (
+                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-amarillo rounded-full" />
+                      )}
+                    </Link>
+                  )}
 
                   {/* Dropdown */}
                   {item.children && (
