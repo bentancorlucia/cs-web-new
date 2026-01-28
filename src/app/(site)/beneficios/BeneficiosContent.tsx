@@ -75,7 +75,7 @@ export function BeneficiosContent() {
                     key={beneficio.id}
                     className="bg-white rounded-xl p-6 shadow-sm border border-stone-100 flex items-center gap-6 hover:shadow-md transition-shadow"
                   >
-                    <div className="flex-shrink-0 w-20 h-20 bg-stone-50 rounded-lg flex items-center justify-center overflow-hidden">
+                    <div className="flex-shrink-0 w-20 h-20 bg-bordo/80 rounded-lg flex items-center justify-center overflow-hidden">
                       {beneficio.logo ? (
                         <Image
                           src={beneficio.logo}
@@ -85,7 +85,7 @@ export function BeneficiosContent() {
                           className="object-contain"
                         />
                       ) : (
-                        <span className="text-2xl font-bold text-bordo/30">
+                        <span className="text-2xl font-bold text-white/70">
                           {beneficio.empresa.charAt(0)}
                         </span>
                       )}
