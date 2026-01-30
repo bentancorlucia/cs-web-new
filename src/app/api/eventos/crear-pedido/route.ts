@@ -216,8 +216,9 @@ export async function POST(request: NextRequest) {
 
     if (entradasError) {
       console.error("Error creating entradas:", entradasError);
+      console.error("Entradas data:", JSON.stringify(entradas, null, 2));
       return NextResponse.json(
-        { error: "Error al crear las entradas" },
+        { error: `Error al crear las entradas: ${entradasError.message}` },
         { status: 500 }
       );
     }

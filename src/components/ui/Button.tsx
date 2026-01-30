@@ -28,7 +28,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const baseStyles = cn(
       "relative inline-flex items-center justify-center font-medium",
-      "transition-[transform,box-shadow,background,border-color] duration-300 ease-out",
+      "transition-all duration-300 ease-out",
       "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
       "disabled:pointer-events-none disabled:opacity-50",
       "overflow-hidden group",
@@ -37,14 +37,17 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary: cn(
-        "bg-gradient-to-r from-bordo to-bordo-dark text-white",
-        "hover:from-bordo-dark hover:to-bordo",
-        "focus-visible:ring-bordo",
-        "shadow-lg shadow-bordo/25 hover:shadow-xl hover:shadow-bordo/30",
-        "active:scale-[0.98]",
+        "bg-gradient-to-r from-bordo via-bordo-light to-bordo text-white",
+        "hover:from-bordo-dark hover:via-bordo hover:to-bordo-dark",
+        "focus-visible:ring-bordo focus-visible:ring-offset-2",
+        "shadow-lg shadow-bordo/30 hover:shadow-xl hover:shadow-bordo/40",
+        "hover:-translate-y-0.5",
+        "active:scale-[0.98] active:translate-y-0",
         // Shine effect on hover
-        "before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent",
-        "before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700"
+        "before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent",
+        "before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700",
+        // Subtle border glow
+        "ring-1 ring-inset ring-white/10"
       ),
       secondary: cn(
         "bg-gradient-to-r from-amarillo to-amarillo-dark text-bordo-dark",

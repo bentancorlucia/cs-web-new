@@ -64,7 +64,7 @@ export interface Entrada {
   cedula_asistente?: string;
   email_asistente?: string;
   telefono_asistente?: string;
-  estado: "valida" | "usada" | "cancelada" | "transferida";
+  estado: "pendiente" | "valida" | "usada" | "cancelada" | "transferida";
   fecha_compra: string;
   fecha_uso?: string;
   notas?: string;

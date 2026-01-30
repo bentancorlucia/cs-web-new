@@ -125,16 +125,29 @@ export function DataTable<T>({
           <thead>
             <tr className="bg-bordo">
               {(onSelectRow || onSelectAll) && (
-                <th className="w-12 px-6 py-4">
-                  <input
-                    type="checkbox"
-                    checked={allSelected}
-                    onChange={onSelectAll}
+                <th className="w-14 px-6 py-4">
+                  <button
+                    type="button"
+                    role="checkbox"
+                    aria-checked={allSelected}
+                    onClick={onSelectAll}
                     className={cn(
-                      "w-4 h-4 rounded-md border-white/30 bg-white/10",
-                      "text-amarillo focus:ring-amarillo/20"
+                      "w-5 h-5 rounded-md flex items-center justify-center",
+                      "border-2 transition-all duration-200",
+                      allSelected
+                        ? "bg-amarillo border-amarillo shadow-sm shadow-amarillo/30"
+                        : "bg-white/10 border-white/40 hover:border-white/60 hover:bg-white/20"
                     )}
-                  />
+                  >
+                    {allSelected && (
+                      <svg className="w-3 h-3 text-bordo-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                    {selectedRows.length > 0 && !allSelected && (
+                      <div className="w-2.5 h-0.5 bg-white rounded-full" />
+                    )}
+                  </button>
                 </th>
               )}
               {columns.map((column) => (
@@ -185,7 +198,7 @@ export function DataTable<T>({
                 <tr key={i} className="animate-pulse">
                   {(onSelectRow || onSelectAll) && (
                     <td className="px-6 py-5">
-                      <div className="w-4 h-4 bg-slate-75 rounded" />
+                      <div className="w-5 h-5 bg-slate-100 rounded-md border-2 border-slate-200" />
                     </td>
                   )}
                   {columns.map((column) => (
@@ -245,15 +258,25 @@ export function DataTable<T>({
                   >
                     {(onSelectRow || onSelectAll) && (
                       <td className="px-6 py-5" onClick={(e) => e.stopPropagation()}>
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => onSelectRow?.(key)}
+                        <button
+                          type="button"
+                          role="checkbox"
+                          aria-checked={isSelected}
+                          onClick={() => onSelectRow?.(key)}
                           className={cn(
-                            "w-4 h-4 rounded-md border-gray-300",
-                            "text-bordo focus:ring-bordo/20"
+                            "w-5 h-5 rounded-md flex items-center justify-center",
+                            "border-2 transition-all duration-200",
+                            isSelected
+                              ? "bg-bordo border-bordo shadow-sm shadow-bordo/30"
+                              : "bg-white border-gray-300 hover:border-bordo/50 hover:bg-bordo/5"
                           )}
-                        />
+                        >
+                          {isSelected && (
+                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </button>
                       </td>
                     )}
                     {columns.map((column) => (
