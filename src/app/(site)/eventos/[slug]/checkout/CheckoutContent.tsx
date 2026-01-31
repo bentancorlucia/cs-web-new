@@ -172,8 +172,8 @@ export function CheckoutContent({ evento, user, profile }: CheckoutContentProps)
       }
 
       // If payment is required, redirect to MercadoPago
-      if (data.init_point) {
-        window.location.href = data.init_point;
+      if (data.sandbox_init_point) {
+        window.location.href = data.sandbox_init_point;
         return;
       }
 

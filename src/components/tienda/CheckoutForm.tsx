@@ -114,11 +114,11 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
         throw new Error(error.message || "Error al crear el pedido");
       }
 
-      const { init_point, order_id } = await response.json();
+      const { sandbox_init_point, order_id } = await response.json();
 
       // Clear cart and redirect to MercadoPago
       clearCart();
-      window.location.href = init_point;
+      window.location.href = sandbox_init_point;
     } catch (err) {
       console.error("Checkout error:", err);
       showError(
