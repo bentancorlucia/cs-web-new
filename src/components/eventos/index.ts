@@ -9,3 +9,5 @@ export type { TipoEntrada, TipoEntradaBasico } from "./TipoEntradaSelector";
 
 export { QRScanner } from "./QRScanner";
 export type { ScanResult } from "./QRScanner";
+
+export { ScanResultOverlay } from "./ScanResultOverlay";

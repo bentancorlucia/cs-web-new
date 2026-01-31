@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { cn, formatDateTime } from "@/lib/utils";
-import { QRScanner, type ScanResult } from "@/components/eventos";
+import { QRScanner, ScanResultOverlay, type ScanResult } from "@/components/eventos";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import type { EventoSocial } from "@/types/eventos";
@@ -38,6 +38,7 @@ export function EscaneoContent({ eventos }: EscaneoContentProps) {
   const [isScanning, setIsScanning] = useState(false);
   const [lastScanResult, setLastScanResult] = useState<ScanResult | null>(null);
   const [lastEntrada, setLastEntrada] = useState<ScanResponse["entrada"] | null>(null);
+  const [showOverlay, setShowOverlay] = useState(false);
   const [scanHistory, setScanHistory] = useState<ScanHistoryItem[]>([]);
   const [stats, setStats] = useState({ validas: 0, yaUsadas: 0, invalidas: 0 });
   const [isProcessing, setIsProcessing] = useState(false);
@@ -116,6 +117,7 @@ export function EscaneoContent({ eventos }: EscaneoContentProps) {
 
         setLastScanResult(scanResult);
         setLastEntrada(data.entrada || null);
+        setShowOverlay(true);
 
         // Add to history
         setScanHistory((prev) => [
@@ -128,12 +130,6 @@ export function EscaneoContent({ eventos }: EscaneoContentProps) {
           },
           ...prev.slice(0, 49), // Keep last 50 scans
         ]);
-
-        // Clear result after 3 seconds
-        setTimeout(() => {
-          setLastScanResult(null);
-          setLastEntrada(null);
-        }, 3000);
       } catch (error) {
         console.error("Error validating entrada:", error);
         const errorResult: ScanResult = {
@@ -142,6 +138,7 @@ export function EscaneoContent({ eventos }: EscaneoContentProps) {
           details: "No se pudo validar la entrada. Intentá de nuevo.",
         };
         setLastScanResult(errorResult);
+        setShowOverlay(true);
       } finally {
         setIsProcessing(false);
       }
@@ -232,71 +229,6 @@ export function EscaneoContent({ eventos }: EscaneoContentProps) {
                       isActive={isScanning}
                     />
 
-                    {/* Scan result overlay */}
-                    {lastScanResult && (
-                      <div
-                        className={cn(
-                          "mt-6 p-6 rounded-2xl transition-all motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 duration-300",
-                          lastScanResult.status === "success" && "bg-green-500",
-                          lastScanResult.status === "warning" && "bg-amarillo",
-                          lastScanResult.status === "error" && "bg-red-500"
-                        )}
-                      >
-                        <div className="flex items-center gap-4">
-                          <div
-                            className={cn(
-                              "w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0",
-                              lastScanResult.status === "success" && "bg-white/20",
-                              lastScanResult.status === "warning" && "bg-bordo/20",
-                              lastScanResult.status === "error" && "bg-white/20"
-                            )}
-                          >
-                            {lastScanResult.status === "success" && (
-                              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                            )}
-                            {lastScanResult.status === "warning" && (
-                              <svg className="w-10 h-10 text-bordo-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                              </svg>
-                            )}
-                            {lastScanResult.status === "error" && (
-                              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <p
-                              className={cn(
-                                "text-2xl font-bold",
-                                lastScanResult.status === "warning" ? "text-bordo-dark" : "text-white"
-                              )}
-                            >
-                              {lastScanResult.message}
-                            </p>
-                            {lastScanResult.details && (
-                              <p
-                                className={cn(
-                                  "text-lg mt-1",
-                                  lastScanResult.status === "warning" ? "text-bordo-dark/80" : "text-white/80"
-                                )}
-                              >
-                                {lastScanResult.details}
-                              </p>
-                            )}
-                            {lastEntrada && lastScanResult.status === "success" && (
-                              <div className="mt-3 pt-3 border-t border-white/20">
-                                <p className="text-white/80 text-sm">
-                                  CI: {lastEntrada.cedula_asistente || "N/A"} · {lastEntrada.tipo_entrada}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </Card>
               ) : (
@@ -456,6 +388,30 @@ export function EscaneoContent({ eventos }: EscaneoContentProps) {
           </div>
         </div>
       </section>
+
+      {/* Full screen overlay for scan results */}
+      {showOverlay && lastScanResult && (
+        <ScanResultOverlay
+          status={lastScanResult.status}
+          message={lastScanResult.message}
+          details={lastScanResult.details}
+          extraInfo={
+            lastEntrada && lastScanResult.status === "success"
+              ? {
+                  nombre: lastEntrada.nombre_asistente,
+                  cedula: lastEntrada.cedula_asistente || undefined,
+                  tipoEntrada: lastEntrada.tipo_entrada,
+                }
+              : undefined
+          }
+          onClose={() => {
+            setShowOverlay(false);
+            setLastScanResult(null);
+            setLastEntrada(null);
+          }}
+          autoCloseDelay={4000}
+        />
+      )}
     </>
   );
 }
