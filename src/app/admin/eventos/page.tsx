@@ -53,17 +53,30 @@ export default function EventosPage() {
 
       if (error) throw error;
 
-      // Fetch statistics for each event
+      // Fetch statistics for each event (conteo real desde tabla entradas)
       if (data) {
         const eventosConStats = await Promise.all(
           data.map(async (evento) => {
+            // Obtener estadísticas base
             const { data: stats } = await supabase
               .from("estadisticas_evento")
               .select("*")
               .eq("evento_id", evento.id)
               .single();
 
-            return { ...evento, estadisticas: stats ?? undefined };
+            // Contar entradas reales de la base de datos
+            const { count: totalVendidas } = await supabase
+              .from("entradas")
+              .select("*", { count: "exact", head: true })
+              .eq("evento_id", evento.id)
+              .neq("estado", "cancelada");
+
+            return {
+              ...evento,
+              estadisticas: stats
+                ? { ...stats, total_vendidas: totalVendidas ?? 0 }
+                : { total_vendidas: totalVendidas ?? 0, ingresos_totales: 0 },
+            };
           })
         );
         setEventos(eventosConStats);

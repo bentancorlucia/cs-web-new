@@ -10,7 +10,7 @@ import { Modal, ModalFooter } from "@/components/ui/Modal";
 import { createClient } from "@/lib/supabase/client";
 import { formatPrice, formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-import type { EventoCompleto, LoteEntrada, TipoEntrada } from "@/types/eventos";
+import type { EventoCompleto, LoteEntrada, TipoEntrada, Entrada } from "@/types/eventos";
 
 interface LoteForm {
   nombre: string;
@@ -75,6 +75,10 @@ export default function EditarEventoPage({
   });
   const [savingTipo, setSavingTipo] = useState(false);
 
+  // Entradas vendidas
+  const [entradas, setEntradas] = useState<Entrada[]>([]);
+  const [totalVendidasReal, setTotalVendidasReal] = useState(0);
+
   const fetchEvento = async () => {
     const supabase = createClient();
 
@@ -95,6 +99,20 @@ export default function EditarEventoPage({
     if (data) {
       setEvento(data as EventoCompleto);
     }
+
+    // Obtener entradas reales de la base de datos
+    const { data: entradasData, count } = await supabase
+      .from("entradas")
+      .select("*", { count: "exact" })
+      .eq("evento_id", id)
+      .neq("estado", "cancelada")
+      .order("fecha_compra", { ascending: false });
+
+    if (entradasData) {
+      setEntradas(entradasData);
+      setTotalVendidasReal(count ?? entradasData.length);
+    }
+
     setLoading(false);
   };
 
@@ -301,12 +319,8 @@ export default function EditarEventoPage({
     );
   }
 
-  const totalVendidas = evento.lotes?.reduce(
-    (sum, lote) =>
-      sum +
-      (lote.tipos_entrada?.reduce((s, t) => s + t.cantidad_vendida, 0) ?? 0),
-    0
-  ) ?? 0;
+  // Usar el conteo real de la base de datos
+  const totalVendidas = totalVendidasReal;
 
   const totalCapacidad = evento.lotes?.reduce(
     (sum, lote) =>
@@ -623,9 +637,93 @@ export default function EditarEventoPage({
 
           {activeTab === "entradas" && (
             <Card padding="lg">
-              <p className="text-gray-500 text-center py-8">
-                Listado de entradas vendidas próximamente...
-              </p>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Entradas Vendidas ({totalVendidas})
+                </h2>
+              </div>
+
+              {entradas.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No hay entradas vendidas
+                  </h3>
+                  <p className="text-gray-500">
+                    Las entradas aparecerán aquí cuando se vendan.
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-left text-xs font-medium text-gray-500 uppercase border-b border-gray-200">
+                        <th className="pb-3 pr-4">Asistente</th>
+                        <th className="pb-3 pr-4">Contacto</th>
+                        <th className="pb-3 pr-4">Fecha Compra</th>
+                        <th className="pb-3 pr-4">Estado</th>
+                        <th className="pb-3">Código QR</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {entradas.map((entrada) => (
+                        <tr key={entrada.id} className="hover:bg-gray-50">
+                          <td className="py-3 pr-4">
+                            <p className="font-medium text-gray-900">
+                              {entrada.nombre_asistente}
+                            </p>
+                            {entrada.cedula_asistente && (
+                              <p className="text-sm text-gray-500">
+                                CI: {entrada.cedula_asistente}
+                              </p>
+                            )}
+                          </td>
+                          <td className="py-3 pr-4">
+                            {entrada.email_asistente && (
+                              <p className="text-sm text-gray-600">
+                                {entrada.email_asistente}
+                              </p>
+                            )}
+                            {entrada.telefono_asistente && (
+                              <p className="text-sm text-gray-500">
+                                {entrada.telefono_asistente}
+                              </p>
+                            )}
+                          </td>
+                          <td className="py-3 pr-4 text-sm text-gray-600">
+                            {formatDate(entrada.fecha_compra)}
+                          </td>
+                          <td className="py-3 pr-4">
+                            <span
+                              className={cn(
+                                "px-2 py-1 text-xs font-medium rounded-full",
+                                entrada.estado === "valida" && "bg-emerald-100 text-emerald-700",
+                                entrada.estado === "usada" && "bg-blue-100 text-blue-700",
+                                entrada.estado === "pendiente" && "bg-amber-100 text-amber-700",
+                                entrada.estado === "cancelada" && "bg-red-100 text-red-700",
+                                entrada.estado === "transferida" && "bg-purple-100 text-purple-700"
+                              )}
+                            >
+                              {entrada.estado === "valida" && "Válida"}
+                              {entrada.estado === "usada" && "Usada"}
+                              {entrada.estado === "pendiente" && "Pendiente"}
+                              {entrada.estado === "cancelada" && "Cancelada"}
+                              {entrada.estado === "transferida" && "Transferida"}
+                            </span>
+                          </td>
+                          <td className="py-3 text-sm text-gray-500 font-mono">
+                            {entrada.codigo_qr.slice(0, 12)}...
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </Card>
           )}
         </div>
