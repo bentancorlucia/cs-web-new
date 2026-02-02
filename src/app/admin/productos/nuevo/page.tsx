@@ -65,6 +65,7 @@ export default function NuevoProductoPage() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof ProductForm, string>>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [coloresText, setColoresText] = useState("");
 
   useEffect(() => {
     async function fetchCategories() {
@@ -337,16 +338,16 @@ export default function NuevoProductoPage() {
                   Colores (separados por coma)
                 </label>
                 <Input
-                  value={form.colores.join(", ")}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      colores: e.target.value
-                        .split(",")
-                        .map((c) => c.trim())
-                        .filter(Boolean),
-                    })
-                  }
+                  value={coloresText}
+                  onChange={(e) => setColoresText(e.target.value)}
+                  onBlur={(e) => {
+                    const colores = e.target.value
+                      .split(",")
+                      .map((c) => c.trim())
+                      .filter(Boolean);
+                    setForm({ ...form, colores });
+                    setColoresText(colores.join(", "));
+                  }}
                   placeholder="Rojo, Azul, Negro"
                 />
               </div>

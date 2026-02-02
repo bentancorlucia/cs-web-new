@@ -12,6 +12,14 @@ import { formatPrice, formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import type { EventoCompleto, LoteEntrada, TipoEntrada, Entrada } from "@/types/eventos";
 
+interface EntradaConPerfil extends Entrada {
+  profile?: {
+    rol: string;
+    nombre: string;
+    apellido: string;
+  };
+}
+
 interface LoteForm {
   nombre: string;
   descripcion: string;
@@ -76,8 +84,10 @@ export default function EditarEventoPage({
   const [savingTipo, setSavingTipo] = useState(false);
 
   // Entradas vendidas
-  const [entradas, setEntradas] = useState<Entrada[]>([]);
+  const [entradas, setEntradas] = useState<EntradaConPerfil[]>([]);
   const [totalVendidasReal, setTotalVendidasReal] = useState(0);
+  const [entradasSocios, setEntradasSocios] = useState(0);
+  const [entradasNoSocios, setEntradasNoSocios] = useState(0);
 
   const fetchEvento = async () => {
     const supabase = createClient();
@@ -100,17 +110,25 @@ export default function EditarEventoPage({
       setEvento(data as EventoCompleto);
     }
 
-    // Obtener entradas reales de la base de datos
+    // Obtener entradas reales de la base de datos con perfil del usuario
     const { data: entradasData, count } = await supabase
       .from("entradas")
-      .select("*", { count: "exact" })
+      .select("*, profile:profiles(rol, nombre, apellido)", { count: "exact" })
       .eq("evento_id", id)
       .neq("estado", "cancelada")
       .order("fecha_compra", { ascending: false });
 
     if (entradasData) {
-      setEntradas(entradasData);
+      setEntradas(entradasData as EntradaConPerfil[]);
       setTotalVendidasReal(count ?? entradasData.length);
+
+      // Contar socios vs no-socios
+      const rolesConMembresia = ["socio", "funcionario", "directivo", "admin"];
+      const socios = entradasData.filter(
+        (e) => e.profile && rolesConMembresia.includes(e.profile.rol)
+      ).length;
+      setEntradasSocios(socios);
+      setEntradasNoSocios((count ?? entradasData.length) - socios);
     }
 
     setLoading(false);
@@ -638,9 +656,22 @@ export default function EditarEventoPage({
           {activeTab === "entradas" && (
             <Card padding="lg">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Entradas Vendidas ({totalVendidas})
-                </h2>
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Entradas Vendidas ({totalVendidas})
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    <span className="inline-flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-bordo"></span>
+                      Socios: {entradasSocios}
+                    </span>
+                    <span className="mx-2">·</span>
+                    <span className="inline-flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-gray-400"></span>
+                      No socios: {entradasNoSocios}
+                    </span>
+                  </p>
+                </div>
               </div>
 
               {entradas.length === 0 ? (
@@ -664,6 +695,7 @@ export default function EditarEventoPage({
                       <tr className="text-left text-xs font-medium text-gray-500 uppercase border-b border-gray-200">
                         <th className="pb-3 pr-4">Asistente</th>
                         <th className="pb-3 pr-4">Contacto</th>
+                        <th className="pb-3 pr-4">Tipo</th>
                         <th className="pb-3 pr-4">Fecha Compra</th>
                         <th className="pb-3 pr-4">Estado</th>
                         <th className="pb-3">Código QR</th>
@@ -692,6 +724,17 @@ export default function EditarEventoPage({
                               <p className="text-sm text-gray-500">
                                 {entrada.telefono_asistente}
                               </p>
+                            )}
+                          </td>
+                          <td className="py-3 pr-4">
+                            {entrada.profile && ["socio", "funcionario", "directivo", "admin"].includes(entrada.profile.rol) ? (
+                              <span className="px-2 py-1 text-xs font-medium rounded-full bg-bordo/10 text-bordo">
+                                Socio
+                              </span>
+                            ) : (
+                              <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                                No socio
+                              </span>
                             )}
                           </td>
                           <td className="py-3 pr-4 text-sm text-gray-600">

@@ -52,6 +52,7 @@ export default function EditarProductoPage({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof ProductForm, string>>>({});
+  const [coloresText, setColoresText] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -65,6 +66,7 @@ export default function EditarProductoPage({
         .single();
 
       if (product) {
+        const colores = product.colores ?? [];
         setForm({
           nombre: product.nombre,
           descripcion: product.descripcion ?? "",
@@ -80,8 +82,9 @@ export default function EditarProductoPage({
           destacado: product.destacado,
           deporte: product.deporte ?? "",
           tallas: product.tallas ?? [],
-          colores: product.colores ?? [],
+          colores,
         });
+        setColoresText(colores.join(", "));
       }
 
       // Fetch categories
@@ -351,16 +354,16 @@ export default function EditarProductoPage({
                   Colores (separados por coma)
                 </label>
                 <Input
-                  value={form.colores.join(", ")}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      colores: e.target.value
-                        .split(",")
-                        .map((c) => c.trim())
-                        .filter(Boolean),
-                    })
-                  }
+                  value={coloresText}
+                  onChange={(e) => setColoresText(e.target.value)}
+                  onBlur={(e) => {
+                    const colores = e.target.value
+                      .split(",")
+                      .map((c) => c.trim())
+                      .filter(Boolean);
+                    setForm({ ...form, colores });
+                    setColoresText(colores.join(", "));
+                  }}
                   placeholder="Rojo, Azul, Negro"
                 />
               </div>

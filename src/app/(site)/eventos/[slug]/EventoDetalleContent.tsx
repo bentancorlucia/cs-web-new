@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ import { useTicketStore } from "@/stores/ticketStore";
 import { LoteSelector, TipoEntradaSelector, EventCard } from "@/components/eventos";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
+import { Sheet, SheetFooter } from "@/components/ui/Sheet";
 import type { EventoCompleto, EventoSocial, LoteConTipos } from "@/types/eventos";
 import type { TipoEntradaBasico } from "@/components/eventos/TipoEntradaSelector";
 
@@ -35,6 +36,8 @@ export function EventoDetalleContent({ evento, eventosRelacionados }: EventoDeta
   } = useTicketStore();
 
   const [selectedLote, setSelectedLote] = useState<LoteConTipos | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   const esSocio = profile?.rol === "socio" || profile?.rol === "admin" || profile?.rol === "directivo";
   const now = new Date();
@@ -102,8 +105,23 @@ export function EventoDetalleContent({ evento, eventosRelacionados }: EventoDeta
 
   const handleContinue = () => {
     if (totalEntradas === 0) return;
+    setIsSheetOpen(false);
     setStep("asistentes");
     router.push(`/eventos/${evento.slug}/checkout`);
+  };
+
+  const handleMobileButtonClick = () => {
+    if (totalEntradas === 0) {
+      // Open sheet to select tickets
+      setIsSheetOpen(true);
+    } else {
+      // Go to checkout
+      handleContinue();
+    }
+  };
+
+  const scrollToSidebar = () => {
+    sidebarRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const dia = fechaEvento.toLocaleDateString("es-UY", { day: "2-digit" });
@@ -338,8 +356,8 @@ export function EventoDetalleContent({ evento, eventosRelacionados }: EventoDeta
               )}
             </div>
 
-            {/* Sidebar - Ticket selector */}
-            <div className="lg:col-span-1">
+            {/* Sidebar - Ticket selector (hidden on mobile, shown in sheet instead) */}
+            <div className="lg:col-span-1 hidden lg:block" ref={sidebarRef}>
               <div className="sticky top-24 space-y-6">
                 {!esPasado && !estaAgotado ? (
                   <Card variant="elevated" padding="none">
@@ -510,6 +528,116 @@ export function EventoDetalleContent({ evento, eventosRelacionados }: EventoDeta
           )}
         </div>
       </section>
+
+      {/* Mobile Bottom Sheet for ticket selection */}
+      <Sheet
+        isOpen={isSheetOpen}
+        onClose={() => setIsSheetOpen(false)}
+        title="Comprar entradas"
+        description="Seleccioná el tipo y cantidad de entradas"
+      >
+        <div className="space-y-6">
+          {/* Lote selector */}
+          {evento.lotes.length > 1 && (
+            <LoteSelector
+              lotes={evento.lotes.map((l) => ({
+                id: l.id,
+                nombre: l.nombre,
+                descripcion: l.descripcion,
+                fecha_inicio: l.fecha_inicio,
+                fecha_fin: l.fecha_fin,
+                activo: l.activo,
+              }))}
+              selectedLoteId={loteId}
+              onSelectLote={handleLoteSelect}
+            />
+          )}
+
+          {/* Tipo selector */}
+          {selectedLote && (
+            <TipoEntradaSelector
+              tipos={selectedLote.tipos_entrada}
+              selections={selectionsMap}
+              onUpdateQuantity={handleUpdateQuantity}
+              esSocio={esSocio}
+            />
+          )}
+
+          {!selectedLote && !loteActivo && (
+            <div className="text-center py-8 text-gray-500">
+              <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="font-medium">Venta no disponible</p>
+              <p className="text-sm mt-1">
+                La venta de entradas aún no ha comenzado o ya finalizó.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Sheet footer with total and CTA */}
+        {totalEntradas > 0 && (
+          <SheetFooter className="-mx-5 -mb-5 mt-6">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-gray-600">
+                {totalEntradas} {totalEntradas === 1 ? "entrada" : "entradas"}
+              </span>
+              <span className="text-2xl font-bold text-bordo">
+                {formatPrice(total)}
+              </span>
+            </div>
+            <Button onClick={handleContinue} className="w-full">
+              Continuar al checkout
+              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Button>
+          </SheetFooter>
+        )}
+      </Sheet>
+
+      {/* Mobile fixed bottom bar */}
+      {!esPasado && !estaAgotado && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] safe-area-inset-bottom">
+          <div className="flex items-center justify-between gap-4 px-4 py-3">
+            {/* Price info */}
+            <div className="flex-1 min-w-0">
+              {totalEntradas > 0 ? (
+                <>
+                  <p className="text-sm text-gray-500">
+                    {totalEntradas} {totalEntradas === 1 ? "entrada" : "entradas"}
+                  </p>
+                  <p className="text-xl font-bold text-bordo truncate">
+                    {formatPrice(total)}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-gray-500">Desde</p>
+                  <p className="text-xl font-bold text-bordo truncate">
+                    {evento.precio_desde !== undefined ? formatPrice(evento.precio_desde) : "Gratis"}
+                  </p>
+                </>
+              )}
+            </div>
+
+            {/* CTA Button */}
+            <Button
+              onClick={handleMobileButtonClick}
+              className="flex-shrink-0"
+              size="sm"
+            >
+              {totalEntradas > 0 ? "Continuar" : "Comprar entradas"}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Spacer for mobile fixed bottom bar */}
+      {!esPasado && !estaAgotado && (
+        <div className="h-20 lg:hidden" aria-hidden="true" />
+      )}
     </>
   );
 }

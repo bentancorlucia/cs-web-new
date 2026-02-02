@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import { useTicketStore, type Asistente } from "@/stores/ticketStore";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Sheet } from "@/components/ui/Sheet";
 import type { EventoCompleto } from "@/types/eventos";
 import type { User } from "@supabase/supabase-js";
 
@@ -47,6 +48,7 @@ export function CheckoutContent({ evento, user, profile }: CheckoutContentProps)
   const [currentStep, setCurrentStep] = useState<CheckoutStep>("asistentes");
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showMobileSummary, setShowMobileSummary] = useState(false);
 
   // Redirect if no selections or wrong event
   useEffect(() => {
@@ -266,46 +268,87 @@ export function CheckoutContent({ evento, user, profile }: CheckoutContentProps)
       </section>
 
       {/* Content */}
-      <section className="py-12 bg-gray-50">
+      <section className="py-6 lg:py-12 bg-gray-50 pb-28 lg:pb-12">
         <div className="container mx-auto px-4 lg:px-8">
+          {/* Mobile summary banner */}
+          <button
+            onClick={() => setShowMobileSummary(true)}
+            className="lg:hidden w-full mb-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm flex items-center justify-between"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-bordo to-bordo-dark flex-shrink-0 overflow-hidden">
+                {evento.imagen_url ? (
+                  <Image
+                    src={evento.imagen_url}
+                    alt={evento.titulo}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div className="text-left">
+                <p className="font-medium text-gray-900 text-sm line-clamp-1">{evento.titulo}</p>
+                <p className="text-xs text-gray-500">
+                  {totalEntradas} {totalEntradas === 1 ? "entrada" : "entradas"}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-bold text-bordo">{formatPrice(total)}</span>
+              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main content */}
             <div className="lg:col-span-2">
               {currentStep === "asistentes" && (
-                <div className="space-y-6">
+                <div className="space-y-4 lg:space-y-6">
                   <Card variant="default">
-                    <CardHeader>
-                      <CardTitle>Datos de los asistentes</CardTitle>
+                    <CardHeader className="px-4 lg:px-6 py-4 lg:py-5">
+                      <CardTitle className="text-lg lg:text-xl">Datos de los asistentes</CardTitle>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Completá los datos de cada persona que asistirá al evento
+                      </p>
                     </CardHeader>
-                    <CardContent className="space-y-8">
+                    <CardContent className="space-y-6 lg:space-y-8 px-4 lg:px-6">
                       {selections.map((selection) => (
                         <div key={selection.tipoEntradaId}>
-                          <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                            <span className="px-2 py-0.5 rounded bg-bordo/10 text-bordo text-sm">
+                          <h3 className="font-semibold text-gray-900 mb-3 lg:mb-4 flex items-center gap-2 text-sm lg:text-base">
+                            <span className="px-2 py-0.5 rounded bg-bordo/10 text-bordo text-xs lg:text-sm">
                               {selection.cantidad}x
                             </span>
                             {selection.tipoEntradaNombre}
                           </h3>
 
-                          <div className="space-y-6">
+                          <div className="space-y-4 lg:space-y-6">
                             {Array.from({ length: selection.cantidad }).map((_, index) => (
                               <div
                                 key={index}
                                 className={cn(
-                                  "p-4 rounded-xl border border-gray-200",
+                                  "p-3 lg:p-4 rounded-xl border border-gray-200",
                                   index === 0 && "bg-bordo/5 border-bordo/20"
                                 )}
                               >
-                                <p className="text-sm font-medium text-gray-700 mb-4">
+                                <p className="text-sm font-medium text-gray-700 mb-3 lg:mb-4">
                                   Asistente {index + 1}
                                   {index === 0 && profile && (
-                                    <span className="ml-2 text-xs text-bordo font-normal">
+                                    <span className="ml-2 text-xs text-bordo font-normal block sm:inline mt-0.5 sm:mt-0">
                                       (datos pre-cargados de tu cuenta)
                                     </span>
                                   )}
                                 </p>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
                                   <Input
                                     label="Nombre completo *"
                                     autoComplete="name"
@@ -365,7 +408,7 @@ export function CheckoutContent({ evento, user, profile }: CheckoutContentProps)
                         >
                           ← Volver al evento
                         </Link>
-                        <Button onClick={handleContinueToPayment}>
+                        <Button onClick={handleContinueToPayment} className="hidden lg:inline-flex">
                           Continuar al pago
                         </Button>
                       </div>
@@ -452,7 +495,7 @@ export function CheckoutContent({ evento, user, profile }: CheckoutContentProps)
                             >
                               ← Volver
                             </button>
-                            <Button onClick={handlePayment} isLoading={isProcessing}>
+                            <Button onClick={handlePayment} isLoading={isProcessing} className="hidden lg:inline-flex">
                               {isProcessing ? "Procesando..." : `Pagar ${formatPrice(total)}`}
                             </Button>
                           </div>
@@ -494,8 +537,8 @@ export function CheckoutContent({ evento, user, profile }: CheckoutContentProps)
               )}
             </div>
 
-            {/* Sidebar - Order summary */}
-            <div className="lg:col-span-1">
+            {/* Sidebar - Order summary (hidden on mobile, shown in sheet) */}
+            <div className="hidden lg:block lg:col-span-1">
               <Card variant="elevated" className="sticky top-24">
                 <CardHeader>
                   <CardTitle>Resumen del pedido</CardTitle>
@@ -581,6 +624,127 @@ export function CheckoutContent({ evento, user, profile }: CheckoutContentProps)
           </div>
         </div>
       </section>
+
+      {/* Mobile summary sheet */}
+      <Sheet
+        isOpen={showMobileSummary}
+        onClose={() => setShowMobileSummary(false)}
+        title="Resumen del pedido"
+      >
+        <div className="space-y-4">
+          {/* Event info */}
+          <div className="flex gap-4 pb-4 border-b border-gray-100">
+            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-bordo to-bordo-dark flex-shrink-0 overflow-hidden">
+              {evento.imagen_url ? (
+                <Image
+                  src={evento.imagen_url}
+                  alt={evento.titulo}
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+              )}
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900">{evento.titulo}</h3>
+              <p className="text-sm text-gray-500">{formatDate(evento.fecha_evento)}</p>
+              {evento.ubicacion && (
+                <p className="text-sm text-gray-500">{evento.ubicacion}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Tickets */}
+          <div className="space-y-3">
+            {selections.map((selection) => (
+              <div key={selection.tipoEntradaId} className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-900">
+                    {selection.cantidad}x {selection.tipoEntradaNombre}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {formatPrice(esSocio && selection.precioSocio ? selection.precioSocio : selection.precio)} c/u
+                  </p>
+                </div>
+                <p className="font-medium text-gray-900">
+                  {formatPrice(
+                    (esSocio && selection.precioSocio ? selection.precioSocio : selection.precio) *
+                      selection.cantidad
+                  )}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Total */}
+          <div className="pt-4 border-t border-gray-200">
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-semibold text-gray-900">Total</span>
+              <span className="text-2xl font-bold text-bordo">{formatPrice(total)}</span>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              {totalEntradas} {totalEntradas === 1 ? "entrada" : "entradas"}
+            </p>
+          </div>
+
+          {/* Socio discount badge */}
+          {esSocio && (
+            <div className="p-3 rounded-lg bg-green-50 border border-green-200">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span className="text-sm font-medium text-green-800">
+                  Precio de socio aplicado
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </Sheet>
+
+      {/* Mobile fixed bottom bar */}
+      {currentStep !== "confirmacion" && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] safe-area-inset-bottom">
+          <div className="flex items-center justify-between gap-4 px-4 py-3">
+            {/* Price info */}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-gray-500">Total a pagar</p>
+              <p className="text-xl font-bold text-bordo truncate">
+                {formatPrice(total)}
+              </p>
+            </div>
+
+            {/* CTA Button */}
+            {currentStep === "asistentes" && (
+              <Button
+                onClick={handleContinueToPayment}
+                size="sm"
+                className="flex-shrink-0"
+              >
+                Continuar
+              </Button>
+            )}
+
+            {currentStep === "pago" && user && (
+              <Button
+                onClick={handlePayment}
+                isLoading={isProcessing}
+                size="sm"
+                className="flex-shrink-0"
+              >
+                {isProcessing ? "Procesando..." : "Pagar"}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }

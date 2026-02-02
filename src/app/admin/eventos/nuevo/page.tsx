@@ -52,6 +52,7 @@ export default function NuevoEventoPage() {
   const [form, setForm] = useState<EventoForm>(defaultForm);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof EventoForm, string>>>({});
+  const [incluyeText, setIncluyeText] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -272,16 +273,16 @@ export default function NuevoEventoPage() {
                 ¿Qué incluye? (separado por coma)
               </label>
               <Input
-                value={form.incluye.join(", ")}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    incluye: e.target.value
-                      .split(",")
-                      .map((i) => i.trim())
-                      .filter(Boolean),
-                  })
-                }
+                value={incluyeText}
+                onChange={(e) => setIncluyeText(e.target.value)}
+                onBlur={(e) => {
+                  const incluye = e.target.value
+                    .split(",")
+                    .map((i) => i.trim())
+                    .filter(Boolean);
+                  setForm({ ...form, incluye });
+                  setIncluyeText(incluye.join(", "));
+                }}
                 placeholder="Ej: Cena, Show en vivo, DJ"
               />
             </div>
